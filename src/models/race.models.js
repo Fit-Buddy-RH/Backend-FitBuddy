@@ -41,11 +41,24 @@ const raceSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
+    type: {
+      type: String,
+      enum: ["jogging", "Running", "Retrorunning"],
+      default: "jogging",
+      required: true,
+    },
+    quantity: {
+      type: number,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["Terminada", "Agendada", "En Curso"],
-      default: "Scheduled",
+      default: "Agendada",
       required: true,
+    },
+    rating: {
+      type: number,
     },
     comment: [
       {
@@ -53,9 +66,6 @@ const raceSchema = mongoose.Schema(
         ref: "comment",
       },
     ],
-    rating: {
-      type: number,
-    },
     assistants: [
       {
         type: Schema.Types.ObjectId,

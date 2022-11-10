@@ -36,10 +36,10 @@ router.get("/all", async (request, response, next) => {
   }
 });
 
-router.get("/user:idUser", async (request, response, next) => {
+router.get("/me", auth, async (request, response, next) => {
   try {
-    const id = request.params.idUser;
-    const user = await userUseCase.getById(id);
+    const { auth } = request;
+    const user = await userUseCase.getById(auth);
     response.json({
       success: true,
       data: {
@@ -51,10 +51,10 @@ router.get("/user:idUser", async (request, response, next) => {
   }
 });
 
-router.get("/me", auth, async (request, response, next) => {
+router.get("/user:idUser", async (request, response, next) => {
   try {
-    const { auth } = request;
-    const user = await userUseCase.getById(auth);
+    const id = request.params.idUser;
+    const user = await userUseCase.getById(id);
     response.json({
       success: true,
       data: {
@@ -87,6 +87,7 @@ router.delete("/me", auth, async (request, response, next) => {
   try {
     const { auth } = request;
     const user = await userUseCase.deleteById(auth);
+    await userUseCase.deleteUserFromFriends(auth);
 
     response.json({
       success: true,

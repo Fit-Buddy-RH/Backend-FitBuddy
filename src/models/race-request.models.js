@@ -13,7 +13,8 @@ const raceRequestSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Approved", "Pending", "Rejected"],
+    enum: ["Pendiente", "Aceptado", "Rechazado"],
+    default: "Pendiente",
     required: true,
   },
 });

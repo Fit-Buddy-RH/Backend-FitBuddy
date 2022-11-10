@@ -1,12 +1,12 @@
 import { User } from "../models/user.models.js";
 import { StatusHttp } from "../libs/errorCustom.js";
 
-async function create(newUser) {
+export async function create(newUser) {
   const data = await User.create({ ...newUser });
   if (!data) throw new StatusHttp("Ha ocurrido un error", 404);
 }
 
-async function getAll() {
+export async function getAll() {
   const data = await User.find({})
     .populate("user")
     .populate("friend_request")
@@ -16,7 +16,7 @@ async function getAll() {
   return data;
 }
 
-async function getById(id) {
+export async function getById(id) {
   const data = await User.findById(id)
     .populate("user")
     .populate("friend_request")
@@ -26,23 +26,23 @@ async function getById(id) {
   return data;
 }
 
-async function update(id, userData) {
-  const data = await User.findOneAndUpdate({ _id: id }, userData, {
+export async function update(id, userData) {
+  const data = await User.findByIdAndUpdate(id, ...userData, {
     new: true,
   });
   if (!data) throw new StatusHttp("Usuario no encontrado", 404);
   return data;
 }
 
-async function deleteById(id) {
-  const data = await User.findOneAndDelete({ _id: id });
+export async function deleteById(id) {
+  const data = await User.findByIdAndDelete(id);
   if (!data) throw new StatusHttp("Usuario no encontrado", 404);
   return data;
 }
 
-async function addRace(id, idRace) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function addRace(id, idRace) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $push: { racesCreated: idRace } },
     {
       new: true,
@@ -52,9 +52,9 @@ async function addRace(id, idRace) {
   return data;
 }
 
-async function deleteRace(id, idRace) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function deleteRace(id, idRace) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $pull: { racesCreated: idRace } },
     {
       new: true,
@@ -64,9 +64,9 @@ async function deleteRace(id, idRace) {
   return data;
 }
 
-async function addRaceRequest(id, idRR) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function addRaceRequest(id, idRR) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $push: { racesRequests: idRR } },
     {
       new: true,
@@ -76,9 +76,9 @@ async function addRaceRequest(id, idRR) {
   return data;
 }
 
-async function deleteRaceRequest(id, idRR) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function deleteRaceRequest(id, idRR) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $pull: { racesRequests: idRR } },
     {
       new: true,
@@ -88,9 +88,9 @@ async function deleteRaceRequest(id, idRR) {
   return data;
 }
 
-async function addFriend(id, idFriend) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function addFriend(id, idFriend) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $push: { friends: idFriend } },
     {
       new: true,
@@ -100,9 +100,9 @@ async function addFriend(id, idFriend) {
   return data;
 }
 
-async function deleteFriend(id, idFriend) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function deleteFriend(id, idFriend) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $pull: { friends: idFriend } },
     {
       new: true,
@@ -112,10 +112,10 @@ async function deleteFriend(id, idFriend) {
   return data;
 }
 
-async function deleteUserFromFriends(id, idFriend) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
-    { $pull: { friends: idFriend } },
+export async function deleteUserFromFriends(id) {
+  const data = await User.updateMany(
+    { friends: id },
+    { $pull: { friends: id } },
     {
       new: true,
     }
@@ -124,9 +124,9 @@ async function deleteUserFromFriends(id, idFriend) {
   return data;
 }
 
-async function addFriendRequest(id, idFriend) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function addFriendRequest(id, idFriend) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $push: { friendsRequest: idFriend } },
     {
       new: true,
@@ -136,9 +136,9 @@ async function addFriendRequest(id, idFriend) {
   return data;
 }
 
-async function deleteFriendRequest(id, idFriend) {
-  const data = await User.findOneAndUpdate(
-    { _id: id },
+export async function deleteFriendRequest(id, idFriend) {
+  const data = await User.findByIdAndUpdate(
+    id,
     { $pull: { friendsRequest: idFriend } },
     {
       new: true,
@@ -147,19 +147,3 @@ async function deleteFriendRequest(id, idFriend) {
   if (!data) throw new StatusHttp("Usuario no encontrado", 404);
   return data;
 }
-
-export {
-  getAll,
-  getById,
-  deleteById,
-  update,
-  create,
-  addRace,
-  deleteRace,
-  addRaceRequest,
-  addRaceRequest,
-  deleteRaceRequest,
-  addFriend,
-  deleteFriend,
-  deleteFriend,
-};

@@ -1,40 +1,50 @@
 import { RaceRequest } from "../models/race-request.models.js";
 import { StatusHttp } from "../libs/customError.js";
 
-async function getByRaceRequest(id) {
-  const data = await RaceRequest.find({ race: id })
-    .populate("user")
-    .populate("race");
-  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
-  return data;
-}
-
-async function getByUserRequests(id) {
-  const data = await RaceRequest.find({ user: id })
-    .populate("user")
-    .populate("race");
-  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
-  return data;
-}
-
-async function create(newRequest, user) {
-  const data = await RaceRequest.create({ ...newRequest, user });
+export async function create(idUser, idRace) {
+  const data = await RaceRequest.create({ idUser, idRace });
   if (!data) throw new StatusHttp("Ha ocurrido un Error", 400);
   return data;
 }
 
-async function deleteById(id) {
-  const data = await RaceRequest.findByIdAndDelete(id);
+export async function getByRace(idRace) {
+  const data = await RaceRequest.find({ race: idRace })
+    .populate("user")
+    .populate("race");
   if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
   return data;
 }
 
-async function update(id, newStatus) {
-  const data = await RaceRequest.findByIdAndUpdate(id, newStatus, {
+export async function getByUser(idUser) {
+  const data = await RaceRequest.find({ user: idUser })
+    .populate("user")
+    .populate("race");
+  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  return data;
+}
+
+export async function update(idRR, newStatus) {
+  const data = await RaceRequest.findByIdAndUpdate(idRR, ...newStatus, {
     new: true,
   });
   if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
   return data;
 }
 
-export { getByRaceRequest, getByUserRequests, create, deleteById, update };
+export async function deleteById(idRR) {
+  const data = await RaceRequest.findByIdAndDelete(idRR);
+  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  return data;
+}
+
+export async function deleteByUser(idUser) {
+  const data = await RaceRequest.deleteMany({ user: idUser });
+  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  return data;
+}
+
+export async function deleteByRace(idRace) {
+  const data = await RaceRequest.deleteMany({ race: idRace });
+  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  return data;
+}
