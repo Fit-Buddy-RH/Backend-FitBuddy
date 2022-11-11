@@ -1,5 +1,9 @@
 import express from "express";
 import * as userUseCase from "../useCase/user.use.js";
+import * as raceUseCase from "../useCase/race.use.js"
+import * as commentUseCase from "../useCase/comment.use.js"
+import * as raceRequestUseCase from "../useCase/raceRequest.use.js"
+import * as friendRequestUseCase from "../useCase/friendRequest.use.js"
 import { auth } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -51,9 +55,9 @@ router.get("/me", auth, async (request, response, next) => {
   }
 });
 
-router.get("/user:idUser", async (request, response, next) => {
+router.get("/:idUser", async (request, response, next) => {
   try {
-    const id = request.params.idUser;
+    const {idUser} = request.params
     const user = await userUseCase.getById(id);
     response.json({
       success: true,
@@ -85,10 +89,14 @@ router.patch("/me", auth, async (request, response, next) => {
 
 router.delete("/me", auth, async (request, response, next) => {
   try {
-    const { auth } = request;
-    const user = await userUseCase.deleteById(auth);
-    await userUseCase.deleteUserFromFriends(auth);
-
+    const { auth:id } = request;
+    const user = await userUseCase.deleteById(id);
+    await userUseCase.deleteUserFromFriends(id);
+    await raceUseCase.deleteByUser(id)
+    await raceUseCase.deleteByUserAssistant(id)
+    await commentUseCase.deleteByUser(id)
+    await raceRequestUseCase.deleteByUser(id)
+    await friendRequestUseCase.deleteByUser(id)
     response.json({
       success: true,
       data: {
