@@ -35,7 +35,7 @@ export async function getByAssistant(id) {
   return data;
 }
 
-export async function getByZipcode(zipCode) {
+export async function getByLocation(zipCode) {
   const data = await Race.find({ location: zipCode })
     .populate("user")
     .populate("comment");
@@ -74,7 +74,13 @@ export async function deleteByUser(idUser) {
 }
 
 export async function deleteByUserAssistant(idUser) {
-  const data = await Race.findOneAndDelete({ user: idUser })
+  const data = await Race.updateMany(
+    { assistants: idUser },
+    { $pull: { assistants: idUser } },
+    {
+      new: true,
+    }
+  )
     .populate("user")
     .populate("comment");
   if (!data) throw new StatusHttp("Post not found", 404);
@@ -126,8 +132,8 @@ export async function updateRating(idRace, rate) {
 }
 
 export async function deleteComment(idRace, idComment) {
-  const data = await Race.findByIdAndUpdate(
-    idRace,
+  const data = await Race.findOneAndDelete(
+    { race: idRace },
     { $pull: { comment: idComment } },
     { new: true }
   )

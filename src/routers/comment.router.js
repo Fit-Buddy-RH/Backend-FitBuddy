@@ -5,64 +5,38 @@ import { auth } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.get("/:idRace", async (request, response, next) => {
+router.post("/:idRace", auth, async (request, response, next) => {
   try {
+    const { auth: idUser } = request;
     const { idRace } = request.params;
-    const allRaceComments = await commentUseCase.getById(idRace);
-    response.json({
-      success: true,
-      data: {
-        comment: allRaceComments,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/", async (request, response, next) => {
-  try {
-    const { idUser, idRace } = request.query;
-    let allComments = "";
-    if (idUser) {
-      allComments = await commentUseCase.getByUser(idUser);
-    } else if (idRace) {
-      allComments = await commentUseCase.getByRace(idRace);
-    } else {
-      throw new StatusHttp("neither an user nor a post are declare!", 404);
-    }
-
-    if (!allComments) {
-      throw new StatusHttp("no comments found!", 404);
-    }
-    response.json({
-      success: true,
-      data: {
-        comment: allComments,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/", auth, async (request, response, next) => {
-  try {
-    const newCommentContent = request.body;
-    const token = request.headers.authorization;
-    const { id } = jwt.decode(token);
-    const newComment = await commentUseCase.create(newCommentContent, id);
-    const raceUpdated = await raceUseCase.createComment(
-      newComment.race,
-      newComment.id
+    const newCommentData = request.body;
+    const newComment = await commentUseCase.create(
+      idUser,
+      idRace,
+      newCommentData
     );
+    await raceUseCase.addComment(idRace, newComment.id);
+    const rating = await commentUseCase.getRating(idRace);
+    await raceUseCase.updateRating(rating);
     response.json({
       success: true,
       data: {
         comment: newComment,
       },
-      race: {
-        raceUpdate: raceUpdated,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:idRace", async (request, response, next) => {
+  try {
+    const { idRace } = request.params;
+    const comments = await commentUseCase.getByRace(idRace);
+    response.json({
+      success: true,
+      data: {
+        comments: comments,
       },
     });
   } catch (error) {
@@ -73,8 +47,10 @@ router.post("/", auth, async (request, response, next) => {
 router.patch("/:idComment", auth, async (request, response, next) => {
   try {
     const { idComment } = request.params;
+    const { auth: idUser } = request;
     const unupdatedComment = request.body;
     const updatedComment = await commentUseCase.update(
+      idUser,
       idComment,
       unupdatedComment
     );
@@ -92,19 +68,14 @@ router.patch("/:idComment", auth, async (request, response, next) => {
 router.delete("/:idComment", auth, async (request, response, next) => {
   try {
     const { idComment } = request.params;
-    const commentDeleted = await commentUseCase.deleteById(idComment);
-    const raceId = commentDeleted.race.toString();
-    const raceUpdated = await raceUseCase.deleteComment(
-      raceId,
-      commentDeleted.id
-    );
+    const { auth: idUser } = request;
+    const commentDeleted = await commentUseCase.deleteById(idComment, idUser);
+    const { id, race } = commentDeleted;
+    await raceUseCase.deleteComment(race, id);
     response.json({
       success: true,
       data: {
         comment: commentDeleted,
-      },
-      race: {
-        race: raceUpdated,
       },
     });
   } catch (error) {

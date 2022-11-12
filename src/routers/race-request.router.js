@@ -1,45 +1,17 @@
 import * as raceRequestUseCase from "../useCase/race-request.use.js";
+import * as raceUseCase from "../useCase/race.use.js";
+import * as userUseCase from "../useCase/user.use.js";
 import express from "express";
+import { auth } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.get("/:idRace", async (request, response, next) => {
+router.post("/:idRace", auth, async (request, response, next) => {
   try {
-    const { idUser } = request.query;
-    const allRequests = raceRequestUseCase.getByRaceRequest(idUser);
-    response.json({
-      success: true,
-      data: {
-        requests: allRequests,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/user/:idUser", async (request, response, next) => {
-  try {
-    const { idUser } = request.params;
-    const allRequests = raceRequestUseCase.getByUserRequests(idUser);
-    response.json({
-      success: true,
-      data: {
-        requests: allRequests,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.post("/", auth, async (request, response, next) => {
-  try {
-    const { body: newRequestContent } = request;
-    const token = request.headers.authorization;
-    const { id } = jwt.decode(token);
-    const newRequest = await raceRequestUseCase.create(newRequestContent, id);
-
+    const { auth: idUser } = request;
+    const { idRace } = request.params;
+    const newRequest = await raceRequestUseCase.create(idUser, idRace);
+    await userUseCase.addRaceRequest(idUser, newRequest.id);
     response.json({
       success: true,
       data: {
@@ -51,14 +23,30 @@ router.post("/", auth, async (request, response, next) => {
   }
 });
 
-router.delete("/:idRequest", auth, async (request, response, next) => {
+router.get("/:idRace", async (request, response, next) => {
   try {
-    const { idRequest } = request.params;
-    const requestDeleted = await raceRequestUseCase.deleteById(idRequest);
-    response.status(200).json({
+    const { idRace } = request.query;
+    const allRequests = raceRequestUseCase.getByRace(idRace);
+    response.json({
       success: true,
-      request: requestDeleted,
-      message: "request Deleted!",
+      data: {
+        requests: allRequests,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/me", auth, async (request, response, next) => {
+  try {
+    const { auth: idUser } = request;
+    const allRequests = raceRequestUseCase.getByUser(idUser);
+    response.json({
+      success: true,
+      data: {
+        requests: allRequests,
+      },
     });
   } catch (error) {
     next(error);
@@ -67,16 +55,38 @@ router.delete("/:idRequest", auth, async (request, response, next) => {
 
 router.patch("/:idRequest", auth, async (request, response, next) => {
   try {
+    const { auth: idUser } = request;
     const updateRequest = request.body;
     const { idRequest } = request.params;
     const requestUpdated = await raceRequestUseCase.update(
       idRequest,
       updateRequest
     );
-    response.status(200).json({
+
+    if (updateRequest == "Aceptado")
+      await raceUseCase.addAssistant(requestUpdated.race, idUser);
+    response.json({
       success: true,
-      request: requestUpdated,
-      message: "request Updated!",
+      data: {
+        requests: requestUpdated,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:idRequest", auth, async (request, response, next) => {
+  try {
+    const { auth: idUser } = request;
+    const { idRequest } = request.params;
+    const requestDeleted = await raceRequestUseCase.deleteById(idRequest);
+    await userUseCase.deleteRaceRequest(idUser, requestDeleted.id);
+    response.json({
+      success: true,
+      data: {
+        requests: requestDeleted,
+      },
     });
   } catch (error) {
     next(error);

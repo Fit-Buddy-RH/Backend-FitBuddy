@@ -26,9 +26,9 @@ export async function getRating(idRace) {
   return averageRate;
 }
 
-export async function update(idUser, idRace, comment) {
+export async function update(idUser, idComment, comment) {
   const data = await Comment.findOneAndUpdate(
-    { race: idRace, user: idUser },
+    { _id: idComment, user: idUser },
     ...comment,
     { new: true }
   );

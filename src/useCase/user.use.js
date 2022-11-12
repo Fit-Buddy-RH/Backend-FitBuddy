@@ -88,6 +88,18 @@ export async function deleteRaceRequest(id, idRR) {
   return data;
 }
 
+export async function deleteManyRacesRequests(idRR) {
+  const data = await User.findOneAndUpdate(
+    { racesRequests: idRR },
+    { $pull: { racesRequests: idRR } },
+    {
+      new: true,
+    }
+  );
+  if (!data) throw new StatusHttp("Usuario no encontrado", 404);
+  return data;
+}
+
 export async function addFriend(id, idFriend) {
   const data = await User.findByIdAndUpdate(
     id,
@@ -124,10 +136,10 @@ export async function deleteUserFromFriends(id) {
   return data;
 }
 
-export async function addFriendRequest(id, idFriend) {
+export async function addFriendRequest(id, idFR) {
   const data = await User.findByIdAndUpdate(
     id,
-    { $push: { friendsRequest: idFriend } },
+    { $push: { friendsRequest: idFR } },
     {
       new: true,
     }
@@ -136,10 +148,10 @@ export async function addFriendRequest(id, idFriend) {
   return data;
 }
 
-export async function deleteFriendRequest(id, idFriend) {
+export async function deleteFriendRequest(id, idFR) {
   const data = await User.findByIdAndUpdate(
     id,
-    { $pull: { friendsRequest: idFriend } },
+    { $pull: { friendsRequest: idFR } },
     {
       new: true,
     }
