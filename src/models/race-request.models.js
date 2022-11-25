@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const raceRequestSchema = mongoose.Schema({
   race: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "race",
     required: true,
   },
   user: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "user",
     required: true,
   },

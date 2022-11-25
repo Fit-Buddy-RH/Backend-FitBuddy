@@ -1,33 +1,42 @@
 import { User } from "../models/user.models.js";
-import { StatusHttp } from "../libs/errorCustom.js";
+import { StatusHttp } from "../libs/customError.js";
 
-export async function create(newUser) {
-  const data = await User.create({ ...newUser });
+export async function create(newUser, file) {
+  const { location, key } = file;
+  const userDataToSave = { ...newUser, image: location, imageKey: key };
+  const data = await User.create({ ...userDataToSave });
   if (!data) throw new StatusHttp("Ha ocurrido un error", 404);
 }
 
 export async function getAll() {
   const data = await User.find({})
-    .populate("user")
-    .populate("friend_request")
-    .populate("race")
-    .populate("race_request");
+    .populate("friends")
+    .populate("friendsRequest")
+    .populate("racesCreated")
+    .populate("racesRequests");
   if (!data) throw new StatusHttp("No hay usuarios creados", 404);
   return data;
 }
 
 export async function getById(id) {
   const data = await User.findById(id)
-    .populate("user")
-    .populate("friend_request")
-    .populate("race")
-    .populate("race_request");
+    .populate("friends")
+    .populate("friendsRequest")
+    .populate("racesCreated")
+    .populate("racesRequests");
   if (!data) throw new StatusHttp("Usuario no encontrado", 404);
   return data;
 }
 
-export async function update(id, userData) {
-  const data = await User.findByIdAndUpdate(id, ...userData, {
+export async function update(id, userData, file) {
+  let userDataToSave = "";
+  if (!file) {
+    userDataToSave = { ...userData };
+  } else {
+    const { location, key } = file;
+    userDataToSave = { ...userData, image: location, imageKey: key };
+  }
+  const data = await User.findByIdAndUpdate(id, userDataToSave, {
     new: true,
   });
   if (!data) throw new StatusHttp("Usuario no encontrado", 404);

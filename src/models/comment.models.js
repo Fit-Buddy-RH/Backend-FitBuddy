@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const commentSchema = mongoose.Schema(
   {
     race: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "race",
       required: true,
     },
     user: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "user",
       required: true,
     },
@@ -21,7 +21,7 @@ const commentSchema = mongoose.Schema(
       type: String,
     },
     rate: {
-      type: number,
+      type: Number,
     },
   },
   { timestamps: true }

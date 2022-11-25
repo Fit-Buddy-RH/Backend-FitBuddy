@@ -1,5 +1,5 @@
 import { Comment } from "../models/comment.models.js";
-import { StatusHttp } from "../libs/errorCustom.js";
+import { StatusHttp } from "../libs/customError.js";
 
 export async function create(idUser, idRace, comment) {
   const data = await Comment.create({ idRace, idUser, ...comment });

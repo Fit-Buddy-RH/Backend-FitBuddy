@@ -1,5 +1,5 @@
 import { Race } from "../models/race.models.js";
-import { StatusHttp } from "../libs/errorCustom.js";
+import { StatusHttp } from "../libs/customError.js";
 
 export async function create(newRace, user) {
   const data = await Race.create({ ...newRace, user });

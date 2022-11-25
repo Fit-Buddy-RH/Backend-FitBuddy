@@ -20,13 +20,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    zipCode: {
-      type: Number,
-      min: 5,
-      max: 5,
-      required: true,
-    },
     image: {
+      type: String,
+    },
+    imageKey: {
       type: String,
     },
     level: {
@@ -49,25 +46,25 @@ const userSchema = new mongoose.Schema(
     },
     friends: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "user",
       },
     ],
     friendsRequest: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "friend_request",
       },
     ],
     racesCreated: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "race",
       },
     ],
     racesRequests: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "race_request",
       },
     ],

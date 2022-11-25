@@ -2,7 +2,7 @@ import express from "express";
 import { auth } from "../middlewares/auth.js";
 import * as raceUseCase from "../useCase/race.use.js";
 import * as UserUseCase from "../useCase/user.use.js";
-import * as raceRequestUseCase from "../useCase/raceRequest.use.js";
+import * as raceRequestUseCase from "../useCase/race-request.use.js";
 import * as commentUseCase from "../useCase/comment.use.js";
 
 const router = express.Router();

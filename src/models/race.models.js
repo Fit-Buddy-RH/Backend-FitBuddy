@@ -17,7 +17,7 @@ const raceSchema = mongoose.Schema(
       trim: true,
     },
     user: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "user",
       required: true,
     },
@@ -32,7 +32,7 @@ const raceSchema = mongoose.Schema(
       required: true,
     },
     km: {
-      type: number,
+      type: Number,
       enum: [5, 10, 15],
       default: 5,
       required: true,
@@ -48,7 +48,7 @@ const raceSchema = mongoose.Schema(
       required: true,
     },
     quantity: {
-      type: number,
+      type: Number,
       required: true,
     },
     status: {
@@ -58,20 +58,23 @@ const raceSchema = mongoose.Schema(
       required: true,
     },
     rating: {
-      type: number,
+      type: Number,
     },
     comment: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "comment",
       },
     ],
     assistants: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "user",
       },
     ],
   },
   { timestamps: true }
 );
+
+const Race = mongoose.model("race", raceSchema);
+export { Race };
