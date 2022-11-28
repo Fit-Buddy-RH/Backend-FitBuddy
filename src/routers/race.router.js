@@ -128,16 +128,28 @@ router.delete("/:idRace", auth, async (request, response, next) => {
     const { idRace } = request.params;
     const { auth: idUser } = request;
     const race = await raceUseCase.deleteById(idRace, idUser);
+    let comments = "";
+    let deleteRR = "";
     await UserUseCase.deleteRace(idUser, idRace);
-    const comments = await commentUseCase.deleteByRace(idRace);
-    const deleteRR = await raceRequestUseCase.deleteByRace(idRace);
-    deleteRR.forEach(async (raceReq) => {
-      await UserUseCase.deleteManyRacesRequests(idUser, raceReq.id);
-    });
+    if (!race.comment) {
+      comments = "no comments to delete";
+    } else {
+      comments = await commentUseCase.deleteByRace(idRace);
+    }
+    const raceReqFound = await raceRequestUseCase.getByRace(idRace);
+    if (raceReqFound.length == 0) {
+      deleteRR = "no race request to delete";
+    } else {
+      deleteRR = await raceRequestUseCase.deleteByRace(idRace);
+      deleteRR.forEach(async (raceReq) => {
+        await UserUseCase.deleteManyRacesRequests(idUser, raceReq.id);
+      });
+    }
     response.json({
       success: true,
       race: race,
       comments: comments,
+      raceRequest: deleteRR,
     });
   } catch (error) {
     next(error);

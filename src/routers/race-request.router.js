@@ -11,26 +11,12 @@ router.post("/:idRace", auth, async (request, response, next) => {
     const { auth: idUser } = request;
     const { idRace } = request.params;
     const newRequest = await raceRequestUseCase.create(idUser, idRace);
-    await userUseCase.addRaceRequest(idUser, newRequest.id);
+    const raceInfo = await raceUseCase.getById(idRace);
+    await userUseCase.addRaceRequest(raceInfo.user, newRequest.id);
     response.json({
       success: true,
       data: {
         request: newRequest,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/:idRace", async (request, response, next) => {
-  try {
-    const { idRace } = request.query;
-    const allRequests = raceRequestUseCase.getByRace(idRace);
-    response.json({
-      success: true,
-      data: {
-        requests: allRequests,
       },
     });
   } catch (error) {
@@ -53,18 +39,30 @@ router.get("/me", auth, async (request, response, next) => {
   }
 });
 
+router.get("/:idRace", async (request, response, next) => {
+  try {
+    const { idRace } = request.params;
+    const allRequests = await raceRequestUseCase.getByRace(idRace);
+    response.json({
+      success: true,
+      data: {
+        requests: allRequests,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.patch("/:idRequest", auth, async (request, response, next) => {
   try {
     const { auth: idUser } = request;
-    const updateRequest = request.body;
+    const { status } = request.body;
     const { idRequest } = request.params;
-    const requestUpdated = await raceRequestUseCase.update(
-      idRequest,
-      updateRequest
-    );
-
-    if (updateRequest == "Aceptado")
-      await raceUseCase.addAssistant(requestUpdated.race, idUser);
+    const requestUpdated = await raceRequestUseCase.update(idRequest, status);
+    await userUseCase.deleteRaceRequest(idUser, idRequest);
+    if (status == "Aceptado")
+      await raceUseCase.addAssistant(requestUpdated.race, requestUpdated.user);
     response.json({
       success: true,
       data: {
@@ -76,12 +74,12 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
   }
 });
 
-router.delete("/:idRequest", auth, async (request, response, next) => {
+router.delete("/:idRequest", async (request, response, next) => {
   try {
-    const { auth: idUser } = request;
     const { idRequest } = request.params;
     const requestDeleted = await raceRequestUseCase.deleteById(idRequest);
-    await userUseCase.deleteRaceRequest(idUser, requestDeleted.id);
+    const raceInfo = await raceUseCase.getById(requestDeleted.race);
+    await userUseCase.deleteRaceRequest(raceInfo.user, requestDeleted.id);
     response.json({
       success: true,
       data: {

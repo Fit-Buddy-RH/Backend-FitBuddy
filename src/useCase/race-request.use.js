@@ -2,8 +2,14 @@ import { RaceRequest } from "../models/race-request.models.js";
 import { StatusHttp } from "../libs/customError.js";
 
 export async function create(idUser, idRace) {
-  const data = await RaceRequest.create({ idUser, idRace });
+  const data = await RaceRequest.create({ user: idUser, race: idRace });
   if (!data) throw new StatusHttp("Ha ocurrido un Error", 400);
+  return data;
+}
+
+export async function getById(id) {
+  const data = await RaceRequest.findById(id).populate("user").populate("race");
+  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
   return data;
 }
 
@@ -16,6 +22,7 @@ export async function getByRace(idRace) {
 }
 
 export async function getByUser(idUser) {
+  console.log(idUser);
   const data = await RaceRequest.find({ user: idUser })
     .populate("user")
     .populate("race");
@@ -24,9 +31,13 @@ export async function getByUser(idUser) {
 }
 
 export async function update(idRR, newStatus) {
-  const data = await RaceRequest.findByIdAndUpdate(idRR, ...newStatus, {
-    new: true,
-  });
+  const data = await RaceRequest.findByIdAndUpdate(
+    idRR,
+    { status: newStatus },
+    {
+      new: true,
+    }
+  );
   if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
   return data;
 }

@@ -1,33 +1,40 @@
 import express from "express";
 import * as commentUseCase from "../useCase/comment.use.js";
 import * as raceUseCase from "../useCase/race.use.js";
+import { upload } from "../middlewares/multer.js";
 import { auth } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.post("/:idRace", auth, async (request, response, next) => {
-  try {
-    const { auth: idUser } = request;
-    const { idRace } = request.params;
-    const newCommentData = request.body;
-    const newComment = await commentUseCase.create(
-      idUser,
-      idRace,
-      newCommentData
-    );
-    await raceUseCase.addComment(idRace, newComment.id);
-    const rating = await commentUseCase.getRating(idRace);
-    await raceUseCase.updateRating(rating);
-    response.json({
-      success: true,
-      data: {
-        comment: newComment,
-      },
-    });
-  } catch (error) {
-    next(error);
+router.post(
+  "/:idRace",
+  auth,
+  upload.single("image"),
+  async (request, response, next) => {
+    try {
+      const { auth: idUser, file } = request;
+      const { idRace } = request.params;
+      const newCommentData = request.body;
+      const newComment = await commentUseCase.create(
+        idUser,
+        idRace,
+        newCommentData,
+        file
+      );
+      await raceUseCase.addComment(idRace, newComment.id);
+      const rating = await commentUseCase.getRating(idRace);
+      await raceUseCase.updateRating(idRace, rating);
+      response.json({
+        success: true,
+        data: {
+          comment: newComment,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router.get("/:idRace", async (request, response, next) => {
   try {
@@ -44,34 +51,45 @@ router.get("/:idRace", async (request, response, next) => {
   }
 });
 
-router.patch("/:idComment", auth, async (request, response, next) => {
-  try {
-    const { idComment } = request.params;
-    const { auth: idUser } = request;
-    const unupdatedComment = request.body;
-    const updatedComment = await commentUseCase.update(
-      idUser,
-      idComment,
-      unupdatedComment
-    );
-    response.json({
-      success: true,
-      data: {
-        comment: updatedComment,
-      },
-    });
-  } catch (error) {
-    next(error);
+router.patch(
+  "/:idComment",
+  auth,
+  upload.single("image"),
+  async (request, response, next) => {
+    try {
+      const { idComment } = request.params;
+      const { auth: idUser, file } = request;
+      const unupdatedComment = request.body;
+      const updatedComment = await commentUseCase.update(
+        idUser,
+        idComment,
+        unupdatedComment,
+        file
+      );
+      const rating = await commentUseCase.getRating(updatedComment.race);
+      await raceUseCase.updateRating(updatedComment.race, rating);
+      response.json({
+        success: true,
+        data: {
+          comment: updatedComment,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router.delete("/:idComment", auth, async (request, response, next) => {
   try {
     const { idComment } = request.params;
     const { auth: idUser } = request;
     const commentDeleted = await commentUseCase.deleteById(idComment, idUser);
-    const { id, race } = commentDeleted;
-    await raceUseCase.deleteComment(race, id);
+    const { race: idRaceUnparsed } = commentDeleted;
+    const idRace = idRaceUnparsed.toString();
+    const rating = await commentUseCase.getRating(idRace);
+    await raceUseCase.updateRating(idRace, rating);
+    await raceUseCase.deleteComment(idRace, idComment);
     response.json({
       success: true,
       data: {

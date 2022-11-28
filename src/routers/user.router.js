@@ -56,6 +56,27 @@ router.get("/me", auth, async (request, response, next) => {
   }
 });
 
+router.get("/raceRequests", auth, async (request, response, next) => {
+  try {
+    const { auth: id } = request;
+    const user = await userUseCase.getById(id);
+    const requestsIds = user.racesRequests;
+    let requests = [];
+    for (const request of requestsIds) {
+      const populateRequest = await raceRequestUseCase.getById(request.id);
+      requests.push(populateRequest);
+    }
+    response.json({
+      success: true,
+      data: {
+        raceRequests: requests,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get("/:idUser", async (request, response, next) => {
   try {
     const { idUser: id } = request.params;

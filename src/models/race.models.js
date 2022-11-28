@@ -43,8 +43,8 @@ const raceSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["jogging", "Running", "Retrorunning"],
-      default: "jogging",
+      enum: ["Jogging", "Running", "Retrorunning"],
+      default: "Jogging",
       required: true,
     },
     quantity: {
@@ -53,8 +53,8 @@ const raceSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Terminada", "Agendada", "En Curso"],
-      default: "Agendada",
+      enum: ["Programada", "En Curso", "Terminada"],
+      default: "Programada",
       required: true,
     },
     rating: {

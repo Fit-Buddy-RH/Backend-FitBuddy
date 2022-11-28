@@ -2,7 +2,7 @@ import { Race } from "../models/race.models.js";
 import { StatusHttp } from "../libs/customError.js";
 
 export async function create(newRace, user) {
-  const data = await Race.create({ ...newRace, user });
+  const data = await Race.create({ ...newRace, user: user, rating: null });
   if (!data) throw new StatusHttp("An error ocurred", 400);
   return data;
 }
@@ -46,7 +46,7 @@ export async function getByLocation(zipCode) {
 export async function update(idRace, idUser, raceData) {
   const data = await Race.findOneAndUpdate(
     { _id: idRace, user: idUser },
-    ...raceData,
+    raceData,
     {
       new: true,
     }
@@ -88,7 +88,7 @@ export async function deleteByUserAssistant(idUser) {
 }
 
 export async function addAssistant(idRace, idUser) {
-  const data = await User.findByIdAndUpdate(
+  const data = await Race.findByIdAndUpdate(
     idRace,
     { $push: { assistants: idUser } },
     {
@@ -124,7 +124,11 @@ export async function addComment(idRace, idComment) {
 }
 
 export async function updateRating(idRace, rate) {
-  const data = await Race.findByIdAndUpdate(idRace, rate, { new: true })
+  const data = await Race.findByIdAndUpdate(
+    idRace,
+    { rating: rate },
+    { new: true }
+  )
     .populate("user")
     .populate("comment");
   if (!data) throw new StatusHttp("An error ocurred", 404);
@@ -132,8 +136,8 @@ export async function updateRating(idRace, rate) {
 }
 
 export async function deleteComment(idRace, idComment) {
-  const data = await Race.findOneAndDelete(
-    { race: idRace },
+  const data = await Race.findByIdAndUpdate(
+    idRace,
     { $pull: { comment: idComment } },
     { new: true }
   )

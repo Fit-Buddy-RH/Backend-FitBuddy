@@ -20,8 +20,12 @@ const commentSchema = mongoose.Schema(
     image: {
       type: String,
     },
+    imageKey: {
+      type: String,
+    },
     rate: {
       type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

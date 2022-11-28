@@ -10,7 +10,7 @@ router.post("/:idUser", auth, async (request, response, next) => {
     const { auth: idMe } = request;
     const { idUser } = request.params;
     const newRequest = await friendRequestUseCase.create(idMe, idUser);
-    await userUseCase.addFriendRequest(id, newRequest.id);
+    await userUseCase.addFriendRequest(idUser, newRequest.id);
     response.json({
       success: true,
       data: {
@@ -24,8 +24,8 @@ router.post("/:idUser", auth, async (request, response, next) => {
 
 router.get("/me", auth, async (request, response, next) => {
   try {
-    const { auth: idUser } = request.query;
-    const allRequests = friendRequestUseCase.getByUser(idUser);
+    const { auth: idUser } = request;
+    const allRequests = await friendRequestUseCase.getByUser(idUser);
     response.json({
       success: true,
       data: {
@@ -42,17 +42,14 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
     const { auth: idMe } = request;
     const updateRequest = request.body;
     const { idRequest } = request.params;
-    const requestData = "";
+    let requestData = "";
 
-    if (updateRequest.status == "aceptado") {
-      const requestData = await friendRequestUseCase.update(
-        idRequest,
-        updateRequest
-      );
-      await userUseCase.addFriend(idMe, requestData.userResponder);
+    if (updateRequest.status == "Aceptado") {
+      requestData = await friendRequestUseCase.update(idRequest, updateRequest);
+      await userUseCase.addFriend(idMe, requestData.userRequester);
+      await userUseCase.addFriend(requestData.userRequester, idMe);
     } else {
-      const requestData = await friendRequestUseCase.deleteById(idRequest);
-      await userUseCase.deleteFriend(idMe, requestData.userResponder);
+      requestData = await friendRequestUseCase.deleteById(idRequest);
       await userUseCase.deleteFriendRequest(idMe, idRequest);
     }
     response.json({
@@ -72,6 +69,8 @@ router.delete("/:idRequest", auth, async (request, response, next) => {
     const { idRequest } = request.params;
     const requestData = await friendRequestUseCase.deleteById(idRequest);
     await userUseCase.deleteFriendRequest(idMe, idRequest);
+    await userUseCase.deleteFriend(idMe, requestData.userRequester);
+    await userUseCase.deleteFriend(requestData.userRequester, idMe);
     response.json({
       success: true,
       data: {

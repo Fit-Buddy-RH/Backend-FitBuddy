@@ -11,8 +11,8 @@ export async function create(idMe, idUser) {
 }
 
 export async function getByUser(idUser) {
-  const data = await FriendRequest.find({ userRequester: idUser }).populate(
-    "user"
+  const data = await FriendRequest.find({ userResponder: idUser }).populate(
+    "userRequester"
   );
   if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
   return data;
