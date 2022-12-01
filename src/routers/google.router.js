@@ -14,25 +14,31 @@ router.post(
   }),
   async (request, response, next) => {
     try {
-      const { _json: userGoogleData } = request.user;
-      const emailFound = await User.findOne({ email: userGoogleData.email });
+      const {
+        user: {
+          _json: {
+            email,
+            given_name: name,
+            family_name: lastname,
+            picture,
+            id,
+          },
+        },
+      } = request;
+      const emailFound = await User.findOne({ email: email });
       let userObject = "";
       let userData = "";
       let action = "";
       let token = "";
       if (!emailFound) {
         userObject = {
-          name: userGoogleData.given_name,
-          lastname: userGoogleData.family_name,
-          birthdate: "1999-01-01",
-          image: userGoogleData.picture,
-          imageKey: null,
-          level: "Principiante",
-          email: userGoogleData.email,
-          idGoogle: userGoogleData.id,
-          idFacebook: null,
+          name: name,
+          lastname: lastname,
+          image: picture,
+          email: email,
+          idGoogle: id,
         };
-        userData = await User.create(userObject, null);
+        userData = await User.create(userObject);
         action = "user Created";
         token = await Auth.logIn(userData.id);
       } else {

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { GeoSchema } from "./geojson.schema.js";
 
 const raceSchema = mongoose.Schema(
   {
@@ -21,10 +22,7 @@ const raceSchema = mongoose.Schema(
       ref: "user",
       required: true,
     },
-    location: {
-      type: String,
-      required: true,
-    },
+    location: GeoSchema,
     level: {
       type: String,
       enum: ["Principiante", "Intermedio", "Experto"],
@@ -75,6 +73,8 @@ const raceSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+raceSchema.index({ location: "2dsphere" });
 
 const Race = mongoose.model("race", raceSchema);
 export { Race };

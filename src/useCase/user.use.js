@@ -1,10 +1,9 @@
 import { User } from "../models/user.models.js";
 import { StatusHttp } from "../libs/customError.js";
+import { s3 } from "../libs/s3/index.js";
 
-export async function create(newUser, file) {
-  const { location, key } = file;
-  const userDataToSave = { ...newUser, image: location, imageKey: key };
-  const data = await User.create({ ...userDataToSave });
+export async function create(newUser) {
+  const data = await User.create({ ...newUser });
   if (!data) throw new StatusHttp("Ha ocurrido un error", 404);
 }
 

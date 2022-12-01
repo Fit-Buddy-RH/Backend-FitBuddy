@@ -35,10 +35,18 @@ export async function getByAssistant(id) {
   return data;
 }
 
-export async function getByLocation(zipCode) {
-  const data = await Race.find({ location: zipCode })
-    .populate("user")
-    .populate("comment");
+export async function getNear(long, lat, m) {
+  const data = await Race.aggregate([
+    {
+      $geoNear: {
+        near: { type: "Point", coordinates: [long, lat] },
+        maxDistance: m * 1000,
+        spherical: true,
+        distanceField: "distance",
+      },
+    },
+  ]);
+
   if (!data) throw new StatusHttp("User has no post.", 400);
   return data;
 }

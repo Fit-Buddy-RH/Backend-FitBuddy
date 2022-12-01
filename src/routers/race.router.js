@@ -1,7 +1,7 @@
 import express from "express";
 import { auth } from "../middlewares/auth.js";
 import * as raceUseCase from "../useCase/race.use.js";
-import * as UserUseCase from "../useCase/user.use.js";
+import * as userUseCase from "../useCase/user.use.js";
 import * as raceRequestUseCase from "../useCase/race-request.use.js";
 import * as commentUseCase from "../useCase/comment.use.js";
 
@@ -13,7 +13,7 @@ router.post("/", auth, async (request, response, next) => {
     const { body: newDataRace, auth: id } = request;
     const newRace = await raceUseCase.create(newDataRace, id);
 
-    await UserUseCase.addRace(id, newRace.id);
+    await userUseCase.addRace(id, newRace.id);
 
     response.json({
       success: true,
@@ -76,9 +76,13 @@ router.get("/user/:idUser", async (request, response, next) => {
 
 router.get("/dashboard", auth, async (request, response, next) => {
   try {
-    const { auth: id } = request;
-    const location = "";
-    const race = await raceUseCase.getByLocation(location, id);
+    let {
+      auth: id,
+      query: { km = 2, long, lat },
+    } = request;
+
+    if (km < 1) km = 1;
+    const race = await raceUseCase.getNear(long, lat, km);
     response.json({
       success: true,
       data: {
@@ -107,8 +111,10 @@ router.get("/:idRace", async (request, response, next) => {
 
 router.patch("/:idRace", auth, async (request, response, next) => {
   try {
-    const { idRace } = request.params;
-    const { auth: idUser } = request;
+    const {
+      auth: idUser,
+      params: { idRace },
+    } = request;
     const newDataRace = request.body;
     const updatedRace = await raceUseCase.update(idRace, idUser, newDataRace);
 
@@ -130,7 +136,7 @@ router.delete("/:idRace", auth, async (request, response, next) => {
     const race = await raceUseCase.deleteById(idRace, idUser);
     let comments = "";
     let deleteRR = "";
-    await UserUseCase.deleteRace(idUser, idRace);
+    await userUseCase.deleteRace(idUser, idRace);
     if (!race.comment) {
       comments = "no comments to delete";
     } else {
@@ -142,7 +148,7 @@ router.delete("/:idRace", auth, async (request, response, next) => {
     } else {
       deleteRR = await raceRequestUseCase.deleteByRace(idRace);
       deleteRR.forEach(async (raceReq) => {
-        await UserUseCase.deleteManyRacesRequests(idUser, raceReq.id);
+        await userUseCase.deleteManyRacesRequests(idUser, raceReq.id);
       });
     }
     response.json({

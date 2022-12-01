@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { GeoSchema } from "./geojson.schema.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,12 +20,14 @@ const userSchema = new mongoose.Schema(
     birthdate: {
       type: Date,
       required: true,
+      default: "1999-01-01T00:00:00.000Z",
     },
     image: {
       type: String,
     },
     imageKey: {
       type: String,
+      default: null,
     },
     level: {
       type: String,
@@ -40,9 +43,12 @@ const userSchema = new mongoose.Schema(
     },
     idGoogle: {
       type: String,
+      required: true,
     },
-    idFacebook: {
-      type: String,
+    isVerified: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
     friends: [
       {
