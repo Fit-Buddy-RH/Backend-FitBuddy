@@ -26,82 +26,50 @@ router.post("/", auth, async (request, response, next) => {
   }
 });
 
-router.get("/all", async (request, response, next) => {
-  try {
-    const allRaces = await raceUseCase.getAll();
-    response.json({
-      success: true,
-      data: {
-        races: allRaces,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/me", auth, async (request, response, next) => {
-  try {
-    const { auth: id } = request;
-    const racesCreated = await raceUseCase.getByUser(id);
-    const racesAssisted = await raceUseCase.getByAssistant(id);
-    response.json({
-      success: true,
-      data: {
-        racesCreated: racesCreated,
-        racesAssisted: racesAssisted,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/user/:idUser", async (request, response, next) => {
-  try {
-    const id = request.params.idUser;
-    const racesCreated = await raceUseCase.getByUser(id);
-    const racesAssisted = await raceUseCase.getByAssistant(id);
-    response.json({
-      success: true,
-      data: {
-        racesCreated: racesCreated,
-        racesAssisted: racesAssisted,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/dashboard", auth, async (request, response, next) => {
+router.get("/", auth, async (request, response, next) => {
   try {
     let {
-      auth: id,
-      query: { km = 2, long, lat },
+      query: { km = 2, long, lat, user, race, me },
+      auth: idme,
     } = request;
+    let races = "";
+    if (user) {
+      const racesCreated = await raceUseCase.getByUser(user);
+      const racesAssisted = await raceUseCase.getByAssistant(user);
+      response.json({
+        success: true,
+        data: {
+          racesCreated: racesCreated,
+          racesAssisted: racesAssisted,
+        },
+      });
+      return;
+    } else if (me) {
+      const racesCreated = await raceUseCase.getByUser(idme);
+      const racesAssisted = await raceUseCase.getByAssistant(idme);
+      response.json({
+        success: true,
+        data: {
+          racesCreated: racesCreated,
+          racesAssisted: racesAssisted,
+        },
+      });
+      return;
+    } else if (race) {
+      races = await raceUseCase.getById(race);
+    } else if (long != undefined && lat != undefined) {
+      if (km < 1) km = 1;
+      const coordinates = [parseFloat(lat), parseFloat(long)];
+      races = await raceUseCase.getNear(coordinates, km);
+    } else {
+      console.log("all");
+      races = await raceUseCase.getAll();
+    }
 
-    if (km < 1) km = 1;
-    const race = await raceUseCase.getNear(long, lat, km);
     response.json({
       success: true,
       data: {
-        races: race,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/:idRace", async (request, response, next) => {
-  try {
-    const { idRace: id } = request.params;
-    const race = await raceUseCase.getById(id);
-    response.json({
-      success: true,
-      data: {
-        race: race,
+        races: races,
       },
     });
   } catch (error) {

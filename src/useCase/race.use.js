@@ -8,7 +8,9 @@ export async function create(newRace, user) {
 }
 
 export async function getAll() {
-  const data = await Race.find({}).populate("user").populate("comment");
+  const data = await Race.find({ status: "Programada" })
+    .populate("user")
+    .populate("comment");
   if (!data) throw new StatusHttp("There are no posts", 400);
   return data;
 }
@@ -35,14 +37,19 @@ export async function getByAssistant(id) {
   return data;
 }
 
-export async function getNear(long, lat, m) {
+export async function getNear(coordinates, m) {
+  console.log(coordinates);
   const data = await Race.aggregate([
     {
       $geoNear: {
-        near: { type: "Point", coordinates: [long, lat] },
+        near: {
+          type: "Point",
+          coordinates: coordinates,
+        },
         maxDistance: m * 1000,
         spherical: true,
         distanceField: "distance",
+        query: { status: "Programada" },
       },
     },
   ]);

@@ -26,64 +26,46 @@ router.post("/", upload.single("image"), async (request, response, next) => {
   }
 });
 
-router.get("/all", async (request, response, next) => {
+router.get("/", auth, async (request, response, next) => {
   try {
-    const allUsers = await userUseCase.getAll();
+    let {
+      query: { me, raceRequest, idUser },
+    } = request;
+    const { auth: idme } = request;
+    let user = "";
+    if (idUser) {
+      user = await userUseCase.getById(idUser);
+    } else if (me) {
+      user = await userUseCase.getById(idme);
+    } else if (raceRequest) {
+      user = await userUseCase.getById(idme);
+      const requestsIds = user.racesRequests;
+      let requests = [];
+      for (const request of requestsIds) {
+        const populateRequest = await raceRequestUseCase.getById(request.id);
+        requests.push(populateRequest);
+      }
+      response.json({
+        success: true,
+        data: {
+          raceRequests: requests,
+        },
+      });
+      return;
+    } else {
+      const allUsers = await userUseCase.getAll();
 
-    response.json({
-      success: true,
-      data: {
-        users: allUsers,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/me", auth, async (request, response, next) => {
-  try {
-    const { auth: id } = request;
-    const user = await userUseCase.getById(id);
-    response.json({
-      success: true,
-      data: {
-        users: user,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/raceRequests", auth, async (request, response, next) => {
-  try {
-    const { auth: id } = request;
-    const user = await userUseCase.getById(id);
-    const requestsIds = user.racesRequests;
-    let requests = [];
-    for (const request of requestsIds) {
-      const populateRequest = await raceRequestUseCase.getById(request.id);
-      requests.push(populateRequest);
+      response.json({
+        success: true,
+        data: {
+          users: allUsers,
+        },
+      });
+      return;
     }
     response.json({
       success: true,
       data: {
-        raceRequests: requests,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/:idUser", async (request, response, next) => {
-  try {
-    const { idUser: id } = request.params;
-    const user = await userUseCase.getById(id);
-    response.json({
-      success: true,
-      data: {
         users: user,
       },
     });
@@ -91,6 +73,72 @@ router.get("/:idUser", async (request, response, next) => {
     next(error);
   }
 });
+
+// router.get("/all", async (request, response, next) => {
+//   try {
+//     const allUsers = await userUseCase.getAll();
+
+//     response.json({
+//       success: true,
+//       data: {
+//         users: allUsers,
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// router.get("/me", auth, async (request, response, next) => {
+//   try {
+//     const { auth: id } = request;
+//     const user = await userUseCase.getById(id);
+//     response.json({
+//       success: true,
+//       data: {
+//         users: user,
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// router.get("/raceRequests", auth, async (request, response, next) => {
+//   try {
+//     const { auth: id } = request;
+//     const user = await userUseCase.getById(id);
+//     const requestsIds = user.racesRequests;
+//     let requests = [];
+//     for (const request of requestsIds) {
+//       const populateRequest = await raceRequestUseCase.getById(request.id);
+//       requests.push(populateRequest);
+//     }
+//     response.json({
+//       success: true,
+//       data: {
+//         raceRequests: requests,
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// router.get("/:idUser", async (request, response, next) => {
+//   try {
+//     const { idUser: id } = request.params;
+//     const user = await userUseCase.getById(id);
+//     response.json({
+//       success: true,
+//       data: {
+//         users: user,
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 router.patch(
   "/me",

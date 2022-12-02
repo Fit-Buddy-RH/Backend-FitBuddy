@@ -51,7 +51,7 @@ const raceSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Programada", "En Curso", "Terminada"],
+      enum: ["Programada", "Terminada"],
       default: "Programada",
       required: true,
     },
