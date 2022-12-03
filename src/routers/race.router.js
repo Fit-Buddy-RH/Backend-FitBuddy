@@ -62,7 +62,6 @@ router.get("/", auth, async (request, response, next) => {
       const coordinates = [parseFloat(lat), parseFloat(long)];
       races = await raceUseCase.getNear(coordinates, km);
     } else {
-      console.log("all");
       races = await raceUseCase.getAll();
     }
 

@@ -34,6 +34,7 @@ router.post(
         userObject = {
           name: name,
           lastname: lastname,
+          fullname: `${name} ${lastname}`,
           image: picture,
           email: email,
           idGoogle: id,

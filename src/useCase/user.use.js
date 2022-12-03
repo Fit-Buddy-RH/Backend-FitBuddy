@@ -1,6 +1,9 @@
 import { User } from "../models/user.models.js";
 import { StatusHttp } from "../libs/customError.js";
 import { s3 } from "../libs/s3/index.js";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export async function create(newUser) {
   const data = await User.create({ ...newUser });
@@ -27,12 +30,33 @@ export async function getById(id) {
   return data;
 }
 
+export async function getByName(name) {
+  const nameTrimmed = name.trim();
+  const data = await User.find({
+    fullname: { $regex: nameTrimmed, $options: "i" },
+  })
+    .populate("friends")
+    .populate("friendsRequest")
+    .populate("racesCreated")
+    .populate("racesRequests");
+  if (!data) throw new StatusHttp("No hay usuarios creados", 404);
+  return data;
+}
+
 export async function update(id, userData, file) {
   let userDataToSave = "";
   if (!file) {
     userDataToSave = { ...userData };
   } else {
+    const user = await User.findById(id);
+    if (user.image && user.imageKey) {
+      s3.deleteObject({
+        Key: user.imageKey,
+        Bucket: process.env.AWS_BUCKET_NAME,
+      }).promise();
+    }
     const { location, key } = file;
+
     userDataToSave = { ...userData, image: location, imageKey: key };
   }
   const data = await User.findByIdAndUpdate(id, userDataToSave, {
@@ -44,6 +68,12 @@ export async function update(id, userData, file) {
 
 export async function deleteById(id) {
   const data = await User.findByIdAndDelete(id);
+  if (data.image && data.imageKey) {
+    s3.deleteObject({
+      Key: data.imageKey,
+      Bucket: process.env.AWS_BUCKET_NAME,
+    }).promise();
+  }
   if (!data) throw new StatusHttp("Usuario no encontrado", 404);
   return data;
 }

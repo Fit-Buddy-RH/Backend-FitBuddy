@@ -19,9 +19,11 @@ const commentSchema = mongoose.Schema(
     },
     image: {
       type: String,
+      default: null,
     },
     imageKey: {
       type: String,
+      default: null,
     },
     rate: {
       type: Number,

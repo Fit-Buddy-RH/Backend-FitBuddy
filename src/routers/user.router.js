@@ -29,7 +29,7 @@ router.post("/", upload.single("image"), async (request, response, next) => {
 router.get("/", auth, async (request, response, next) => {
   try {
     let {
-      query: { me, raceRequest, idUser },
+      query: { me, raceRequest, idUser, search },
     } = request;
     const { auth: idme } = request;
     let user = "";
@@ -52,6 +52,8 @@ router.get("/", auth, async (request, response, next) => {
         },
       });
       return;
+    } else if (search) {
+      user = await userUseCase.getByName(search);
     } else {
       const allUsers = await userUseCase.getAll();
 
@@ -74,74 +76,8 @@ router.get("/", auth, async (request, response, next) => {
   }
 });
 
-// router.get("/all", async (request, response, next) => {
-//   try {
-//     const allUsers = await userUseCase.getAll();
-
-//     response.json({
-//       success: true,
-//       data: {
-//         users: allUsers,
-//       },
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// router.get("/me", auth, async (request, response, next) => {
-//   try {
-//     const { auth: id } = request;
-//     const user = await userUseCase.getById(id);
-//     response.json({
-//       success: true,
-//       data: {
-//         users: user,
-//       },
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// router.get("/raceRequests", auth, async (request, response, next) => {
-//   try {
-//     const { auth: id } = request;
-//     const user = await userUseCase.getById(id);
-//     const requestsIds = user.racesRequests;
-//     let requests = [];
-//     for (const request of requestsIds) {
-//       const populateRequest = await raceRequestUseCase.getById(request.id);
-//       requests.push(populateRequest);
-//     }
-//     response.json({
-//       success: true,
-//       data: {
-//         raceRequests: requests,
-//       },
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// router.get("/:idUser", async (request, response, next) => {
-//   try {
-//     const { idUser: id } = request.params;
-//     const user = await userUseCase.getById(id);
-//     response.json({
-//       success: true,
-//       data: {
-//         users: user,
-//       },
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
 router.patch(
-  "/me",
+  "/",
   auth,
   upload.single("image"),
   async (request, response, next) => {
@@ -161,7 +97,7 @@ router.patch(
   }
 );
 
-router.delete("/me", auth, async (request, response, next) => {
+router.delete("/", auth, async (request, response, next) => {
   try {
     const { auth: id } = request;
     const user = await userUseCase.deleteById(id);

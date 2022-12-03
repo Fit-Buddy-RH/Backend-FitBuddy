@@ -53,11 +53,22 @@ export async function update(idUser, idComment, comment, file) {
   let data = "";
   if (!file) {
     data = await Comment.findOneAndUpdate(
-      { _id: idComment, user: idUser, image: null, imageKey: null },
+      { _id: idComment, user: idUser },
       ...comment,
       { new: true }
     );
   } else {
+    const commentFound = await Comment.findById(idComment);
+    if (
+      commentFound.image &&
+      commentFound.imageKey &&
+      commentFound.user == idUser
+    ) {
+      s3.deleteObject({
+        Key: commentFound.imageKey,
+        Bucket: process.env.AWS_BUCKET_NAME,
+      }).promise();
+    }
     const { location, key } = file;
     data = await Comment.findOneAndUpdate(
       { _id: idComment, user: idUser },
@@ -70,6 +81,17 @@ export async function update(idUser, idComment, comment, file) {
 }
 
 export async function deleteById(idComment, idUser) {
+  const commentFound = await Comment.findById(idComment);
+  if (
+    commentFound.image &&
+    commentFound.imageKey &&
+    commentFound.user == idUser
+  ) {
+    s3.deleteObject({
+      Key: commentFound.imageKey,
+      Bucket: process.env.AWS_BUCKET_NAME,
+    }).promise();
+  }
   const data = await Comment.findOneAndDelete({ _id: idComment, user: idUser });
   if (!data) throw new StatusHttp("Comment not found", 404);
   return data;
