@@ -38,7 +38,6 @@ export async function getByAssistant(id) {
 }
 
 export async function getNear(coordinates, m) {
-  console.log(coordinates);
   const data = await Race.aggregate([
     {
       $geoNear: {
