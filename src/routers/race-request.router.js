@@ -15,23 +15,9 @@ router.post("/:idRace", auth, async (request, response, next) => {
     await userUseCase.addRaceRequest(raceInfo.user, newRequest.id);
     response.json({
       success: true,
+      message: "Solicitud de Carrera creada con éxito",
       data: {
         request: newRequest,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get("/me", auth, async (request, response, next) => {
-  try {
-    const { auth: idUser } = request;
-    const allRequests = raceRequestUseCase.getByUser(idUser);
-    response.json({
-      success: true,
-      data: {
-        requests: allRequests,
       },
     });
   } catch (error) {
@@ -65,6 +51,7 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
       await raceUseCase.addAssistant(requestUpdated.race, requestUpdated.user);
     response.json({
       success: true,
+      message: "Solicitud de Carrera editada con éxito",
       data: {
         requests: requestUpdated,
       },
@@ -82,6 +69,7 @@ router.delete("/:idRequest", async (request, response, next) => {
     await userUseCase.deleteRaceRequest(raceInfo.user, requestDeleted.id);
     response.json({
       success: true,
+      message: "Solicitud de Carrera eliminada con éxito",
       data: {
         requests: requestDeleted,
       },

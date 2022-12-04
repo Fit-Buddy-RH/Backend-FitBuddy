@@ -71,6 +71,7 @@ router.patch(
       const updatedUser = await userUseCase.update(id, newDataUser, file);
       response.json({
         success: true,
+        message: "El Usuario fue editado con éxito",
         data: {
           user: updatedUser,
         },
@@ -93,6 +94,7 @@ router.delete("/", auth, async (request, response, next) => {
     await friendRequestUseCase.deleteByUser(id);
     response.json({
       success: true,
+      message: "Usuario borrado con éxito",
       data: {
         user: user,
       },

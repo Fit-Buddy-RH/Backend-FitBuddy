@@ -26,6 +26,7 @@ router.post(
       await raceUseCase.updateRating(idRace, rating);
       response.json({
         success: true,
+        message: "Comentario creado con éxito",
         data: {
           comment: newComment,
         },
@@ -70,6 +71,7 @@ router.patch(
       await raceUseCase.updateRating(updatedComment.race, rating);
       response.json({
         success: true,
+        message: "Comentario editado con éxito",
         data: {
           comment: updatedComment,
         },
@@ -92,6 +94,7 @@ router.delete("/:idComment", auth, async (request, response, next) => {
     await raceUseCase.deleteComment(idRace, idComment);
     response.json({
       success: true,
+      message: "Comentario eliminado con éxito",
       data: {
         comment: commentDeleted,
       },

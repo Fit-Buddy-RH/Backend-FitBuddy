@@ -17,6 +17,7 @@ router.post("/", auth, async (request, response, next) => {
 
     response.json({
       success: true,
+      message: "Carrera creada con éxito",
       data: {
         race: newRace,
       },
@@ -87,6 +88,7 @@ router.patch("/:idRace", auth, async (request, response, next) => {
 
     response.json({
       success: true,
+      message: "Carrera editada con éxito",
       data: {
         race: updatedRace,
       },
@@ -105,13 +107,13 @@ router.delete("/:idRace", auth, async (request, response, next) => {
     let deleteRR = "";
     await userUseCase.deleteRace(idUser, idRace);
     if (!race.comment) {
-      comments = "no comments to delete";
+      comments = "No hay comentarios por eliminar";
     } else {
       comments = await commentUseCase.deleteByRace(idRace);
     }
     const raceReqFound = await raceRequestUseCase.getByRace(idRace);
     if (raceReqFound.length == 0) {
-      deleteRR = "no race request to delete";
+      deleteRR = "No hay solicitudes de carreras por eliminar";
     } else {
       deleteRR = await raceRequestUseCase.deleteByRace(idRace);
       deleteRR.forEach(async (raceReq) => {
@@ -120,6 +122,7 @@ router.delete("/:idRace", auth, async (request, response, next) => {
     }
     response.json({
       success: true,
+      message: "Carrera eliminada con éxito",
       race: race,
       comments: comments,
       raceRequest: deleteRR,
