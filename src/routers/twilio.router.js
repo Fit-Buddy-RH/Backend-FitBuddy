@@ -7,32 +7,39 @@ const { TWILIO_SERVICE_ID } = process.env;
 
 const router = express.Router();
 
-router.get("/verify/:to", async (req, res) => {
-  const to = req.params.to;
+router.get("/verify/:to", async (request, response, next) => {
+  try {
+    const {
+      params: { to },
+    } = request;
 
-  twilioClient.verify
-    .services(TWILIO_SERVICE_ID)
-    .verifications.create({ to, channel: "sms" })
-    .then((verification) => {
-      res.json(verification);
-    })
-    .catch((err) => {
-      res.json(err);
+    const verification = await twilioClient.verify
+      .services(TWILIO_SERVICE_ID)
+      .verifications.create({ to: to, channel: "sms" });
+    response.json({
+      success: true,
+      verification: verification,
     });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.get("/check/:to/:code", async (req, res) => {
-  const to = req.params.to;
-  const code = req.params.code;
-  twilioClient.verify
-    .services(TWILIO_SERVICE_ID)
-    .verificationChecks.create({ to, code })
-    .then((verification) => {
-      res.json(verification);
-    })
-    .catch((err) => {
-      res.json(err);
+router.get("/check/:to/:code", async (request, response, next) => {
+  try {
+    const {
+      params: { to, code },
+    } = request;
+    const verification = await twilioClient.verify
+      .services(TWILIO_SERVICE_ID)
+      .verificationChecks.create({ to: to, code: code });
+    response.json({
+      success: true,
+      verification: verification,
     });
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default router;
