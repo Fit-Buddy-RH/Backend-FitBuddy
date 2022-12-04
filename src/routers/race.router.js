@@ -59,7 +59,7 @@ router.get("/", auth, async (request, response, next) => {
       races = await raceUseCase.getById(race);
     } else if (long != undefined && lat != undefined) {
       if (km < 1) km = 1;
-      const coordinates = [parseFloat(lat), parseFloat(long)];
+      const coordinates = [parseFloat(long), parseFloat(lat)];
       races = await raceUseCase.getNear(coordinates, km);
     } else {
       races = await raceUseCase.getAll();
