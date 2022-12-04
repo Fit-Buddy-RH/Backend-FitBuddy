@@ -3,7 +3,7 @@ import { StatusHttp } from "../libs/customError.js";
 
 export async function create(newRace, user) {
   const data = await Race.create({ ...newRace, user: user, rating: null });
-  if (!data) throw new StatusHttp("An error ocurred", 400);
+  if (!data) throw new StatusHttp("Ocurrió un error", 400);
   return data;
 }
 
@@ -11,13 +11,13 @@ export async function getAll() {
   const data = await Race.find({ status: "Programada" })
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("There are no posts", 400);
+  if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }
 
 export async function getById(id) {
   const data = await Race.findById(id).populate("user").populate("comment");
-  if (!data) throw new StatusHttp("Post not found", 404);
+  if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }
 
@@ -25,7 +25,7 @@ export async function getByUser(id) {
   const data = await Race.find({ user: id })
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("User has no post.", 400);
+  if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }
 
@@ -33,7 +33,7 @@ export async function getByAssistant(id) {
   const data = await Race.find({ assistants: id })
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("User has no post.", 400);
+  if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }
 
@@ -53,7 +53,7 @@ export async function getNear(coordinates, m) {
     },
   ]);
 
-  if (!data) throw new StatusHttp("User has no post.", 400);
+  if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }
 
@@ -67,7 +67,7 @@ export async function update(idRace, idUser, raceData) {
   )
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("Post not found", 404);
+  if (!data) throw new StatusHttp("Ocurrió un error", 400);
   return data;
 }
 
@@ -75,7 +75,7 @@ export async function deleteById(idRace, idUser) {
   const data = await Race.findOneAndDelete({ _id: idRace, user: idUser })
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("Post not found", 404);
+  if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }
 
@@ -83,7 +83,7 @@ export async function deleteByUser(idUser) {
   const data = await Race.deleteMany({ user: idUser })
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("Post not found", 404);
+  if (!data) throw new StatusHttp("Usuario no tiene carreras", 404);
   return data;
 }
 
@@ -97,7 +97,7 @@ export async function deleteByUserAssistant(idUser) {
   )
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("Post not found", 404);
+  if (!data) throw new StatusHttp("Carreras no encontradas", 404);
   return data;
 }
 
@@ -109,7 +109,7 @@ export async function addAssistant(idRace, idUser) {
       new: true,
     }
   );
-  if (!data) throw new StatusHttp("Usuario no encontrado", 404);
+  if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }
 
@@ -121,7 +121,7 @@ export async function deleteAssistant(idRace, idUser) {
       new: true,
     }
   );
-  if (!data) throw new StatusHttp("Usuario no encontrado", 404);
+  if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }
 
@@ -133,7 +133,7 @@ export async function addComment(idRace, idComment) {
   )
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("An error ocurred", 404);
+  if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }
 
@@ -145,7 +145,7 @@ export async function updateRating(idRace, rate) {
   )
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("An error ocurred", 404);
+  if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }
 
@@ -157,6 +157,6 @@ export async function deleteComment(idRace, idComment) {
   )
     .populate("user")
     .populate("comment");
-  if (!data) throw new StatusHttp("Post not found", 404);
+  if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }

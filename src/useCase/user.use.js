@@ -7,7 +7,7 @@ dotenv.config();
 
 export async function create(newUser) {
   const data = await User.create({ ...newUser });
-  if (!data) throw new StatusHttp("Ha ocurrido un error", 404);
+  if (!data) throw new StatusHttp("Ha ocurrido un error", 400);
 }
 
 export async function getAll() {
@@ -39,7 +39,7 @@ export async function getByName(name) {
     .populate("friendsRequest")
     .populate("racesCreated")
     .populate("racesRequests");
-  if (!data) throw new StatusHttp("No hay usuarios creados", 404);
+  if (!data) throw new StatusHttp("Usuario no encontrado", 404);
   return data;
 }
 
@@ -62,7 +62,7 @@ export async function update(id, userData, file) {
   const data = await User.findByIdAndUpdate(id, userDataToSave, {
     new: true,
   });
-  if (!data) throw new StatusHttp("Usuario no encontrado", 404);
+  if (!data) throw new StatusHttp("Ha ocurrido un error", 400);
   return data;
 }
 
