@@ -11,9 +11,10 @@ export async function create(idMe, idUser) {
 }
 
 export async function getByUser(idUser) {
-  const data = await FriendRequest.find({ userResponder: idUser }).populate(
-    "userRequester"
-  );
+  const data = await FriendRequest.find({
+    userResponder: idUser,
+    status: "Pendiente",
+  }).populate("userRequester");
   if (!data) throw new StatusHttp("Solicitud de amistad no encontrada", 404);
   return data;
 }
