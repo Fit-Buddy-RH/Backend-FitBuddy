@@ -28,7 +28,7 @@ router.post(
       const emailFound = await User.findOne({ email: email });
       let userObject = "";
       let userData = "";
-      let action = "";
+      let message = "";
       let token = "";
       if (!emailFound) {
         userObject = {
@@ -40,16 +40,16 @@ router.post(
           idGoogle: id,
         };
         userData = await User.create(userObject);
-        action = "user Created";
+        message = "Usuario creado con éxito";
         token = await Auth.logIn(userData.id);
       } else {
         userData = emailFound;
-        action = "User Found";
+        message = "Usuario loggeado con éxito";
         token = await Auth.logIn(emailFound.id);
       }
 
       response.json({
-        action: action,
+        message: message,
         token: token,
         data: userData,
       });

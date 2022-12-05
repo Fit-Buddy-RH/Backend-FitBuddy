@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
-import { GeoSchema } from "./geojson.schema.js";
+
+const GeoSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    default: "Point",
+    required: true,
+  },
+  coordinates: {
+    type: [Number],
+    required: true,
+  },
+});
 
 const raceSchema = mongoose.Schema(
   {

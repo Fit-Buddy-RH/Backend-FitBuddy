@@ -13,6 +13,7 @@ router.post("/:idUser", auth, async (request, response, next) => {
     await userUseCase.addFriendRequest(idUser, newRequest.id);
     response.json({
       success: true,
+      message: "Solicitud de amistad creada con éxito",
       data: {
         request: newRequest,
       },
@@ -22,7 +23,7 @@ router.post("/:idUser", auth, async (request, response, next) => {
   }
 });
 
-router.get("/me", auth, async (request, response, next) => {
+router.get("/", auth, async (request, response, next) => {
   try {
     const { auth: idUser } = request;
     const allRequests = await friendRequestUseCase.getByUser(idUser);
@@ -54,6 +55,7 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
     }
     response.json({
       success: true,
+      message: "Solicitud de amistad editada con éxito",
       data: {
         requests: requestData,
       },
@@ -73,6 +75,7 @@ router.delete("/:idRequest", auth, async (request, response, next) => {
     await userUseCase.deleteFriend(requestData.userRequester, idMe);
     response.json({
       success: true,
+      message: "Solicitud de amistad eliminada con éxito",
       data: {
         requests: requestData,
       },

@@ -11,10 +11,11 @@ export async function create(idMe, idUser) {
 }
 
 export async function getByUser(idUser) {
-  const data = await FriendRequest.find({ userResponder: idUser }).populate(
-    "userRequester"
-  );
-  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  const data = await FriendRequest.find({
+    userResponder: idUser,
+    status: "Pendiente",
+  }).populate("userRequester");
+  if (!data) throw new StatusHttp("Solicitud de amistad no encontrada", 404);
   return data;
 }
 
@@ -22,18 +23,18 @@ export async function update(idFR, newStatus) {
   const data = await FriendRequest.findByIdAndUpdate(idFR, newStatus, {
     new: true,
   });
-  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  if (!data) throw new StatusHttp("Solicitud de amistad no encontrada", 404);
   return data;
 }
 
 export async function deleteById(idFR) {
   const data = await FriendRequest.findByIdAndDelete(idFR);
-  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  if (!data) throw new StatusHttp("Solicitud de amistad no encontrada", 404);
   return data;
 }
 
 export async function deleteByUser(idUser) {
   const data = await FriendRequest.deleteMany({ user: idUser });
-  if (!data) throw new StatusHttp("Ha ocurrido un Error", 404);
+  if (!data) throw new StatusHttp("Solicitudes no encontradas", 404);
   return data;
 }

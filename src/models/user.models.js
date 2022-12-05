@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { GeoSchema } from "./geojson.schema.js";
 
 const userSchema = new mongoose.Schema(
   {

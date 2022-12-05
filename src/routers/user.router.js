@@ -10,22 +10,6 @@ import { auth } from "../middlewares/auth.js";
 const router = express.Router();
 router.use(express.json());
 
-router.post("/", upload.single("image"), async (request, response, next) => {
-  try {
-    const { body: newDataUser, file } = request;
-    const newUser = await userUseCase.create(newDataUser, file);
-
-    response.json({
-      success: true,
-      data: {
-        user: newUser,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
 router.get("/", auth, async (request, response, next) => {
   try {
     let {
@@ -87,6 +71,7 @@ router.patch(
       const updatedUser = await userUseCase.update(id, newDataUser, file);
       response.json({
         success: true,
+        message: "El Usuario fue editado con éxito",
         data: {
           user: updatedUser,
         },
@@ -109,6 +94,7 @@ router.delete("/", auth, async (request, response, next) => {
     await friendRequestUseCase.deleteByUser(id);
     response.json({
       success: true,
+      message: "Usuario borrado con éxito",
       data: {
         user: user,
       },
