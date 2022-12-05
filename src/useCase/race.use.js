@@ -51,8 +51,8 @@ export async function getNear(coordinates, m) {
         query: { status: "Programada" },
       },
     },
-  ]);
-
+  ]).populate("user")
+    .populate("comment");
   if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }
