@@ -1,8 +1,18 @@
 import { Race } from "../models/race.models.js";
+import { User } from "../models/user.models.js";
+import { Comment } from "../models/comment.models.js";
 import { StatusHttp } from "../libs/customError.js";
 
 export async function create(newRace, user) {
-  const data = await Race.create({ ...newRace, user: user, rating: null });
+  const imageUrl = `https://fibuddy-users-bucket.s3.us-east-2.amazonaws.com/races-photos/race-${
+    Math.floor(Math.random() * 60) + 1
+  }.jpg`;
+  const data = await Race.create({
+    ...newRace,
+    user: user,
+    rating: null,
+    image: imageUrl,
+  });
   if (!data) throw new StatusHttp("Ocurrió un error", 400);
   return data;
 }
@@ -53,6 +63,8 @@ export async function getNear(coordinates, m) {
     },
   ]);
 
+  await User.populate(data, { path: "user" });
+  await Comment.populate(data, { path: "comment" });
   if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }

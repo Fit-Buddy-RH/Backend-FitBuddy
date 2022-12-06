@@ -22,7 +22,6 @@ export async function getByRace(idRace) {
 }
 
 export async function getByUser(idUser) {
-  console.log(idUser);
   const data = await RaceRequest.find({ user: idUser })
     .populate("user")
     .populate("race");
