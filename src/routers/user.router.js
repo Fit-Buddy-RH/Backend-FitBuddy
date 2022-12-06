@@ -13,7 +13,7 @@ router.use(express.json());
 router.get("/", auth, async (request, response, next) => {
   try {
     let {
-      query: { me, raceRequest, idUser, search },
+      query: { me, raceRequest, sentRequests, idUser, search },
     } = request;
     const { auth: idme } = request;
     let user = "";
@@ -29,6 +29,15 @@ router.get("/", auth, async (request, response, next) => {
         const populateRequest = await raceRequestUseCase.getById(request.id);
         requests.push(populateRequest);
       }
+      response.json({
+        success: true,
+        data: {
+          raceRequests: requests,
+        },
+      });
+      return;
+    } else if (sentRequests) {
+      const requests = await raceRequestUseCase.getByUser(idme);
       response.json({
         success: true,
         data: {

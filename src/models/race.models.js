@@ -24,7 +24,6 @@ const raceSchema = mongoose.Schema(
     description: {
       type: String,
       required: true,
-      minLenght: 15,
       maxLenght: 10000,
       trim: true,
     },
@@ -59,6 +58,9 @@ const raceSchema = mongoose.Schema(
     quantity: {
       type: Number,
       required: true,
+    },
+    image: {
+      type: String,
     },
     status: {
       type: String,
