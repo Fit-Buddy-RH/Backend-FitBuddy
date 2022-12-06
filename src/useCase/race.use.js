@@ -65,6 +65,7 @@ export async function getNear(coordinates, m) {
 
   await User.populate(data, { path: "user" });
   await Comment.populate(data, { path: "comment" });
+
   if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }
