@@ -1,10 +1,13 @@
 import jwt from "../libs/jwt.js";
+import * as userUseCase from "../useCase/user.use.js";
 
 function auth(request, response, next) {
   try {
     const { authorization: token } = request.headers;
     const tokenDecoded = jwt.verify(token);
     if (!tokenDecoded) throw new Error("No autorizado");
+    const { isVerified } = userUseCase.getById(tokenDecoded.id);
+    if (!isVerified) throw new Error("No está verificado");
     request.auth = tokenDecoded.id;
     next();
   } catch (error) {

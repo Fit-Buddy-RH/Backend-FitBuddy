@@ -43,10 +43,15 @@ router.post("/:idRace", auth, async (request, response, next) => {
   }
 });
 
-router.get("/:idRace", async (request, response, next) => {
+router.get("/", async (request, response, next) => {
   try {
-    const { idRace } = request.params;
-    const allRequests = await raceRequestUseCase.getByRace(idRace);
+    const { idRace, idUser } = request.query;
+    let allRequests = "";
+    if (idRace) {
+      allRequests = await raceRequestUseCase.getByRace(idRace);
+    } else if (idUser) {
+      allRequests = await raceRequestUseCase.getByUser(idRace);
+    }
     response.json({
       success: true,
       data: {
@@ -76,6 +81,8 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
         image: raceImage,
         date,
         type,
+        quantity,
+        assistants,
       } = await raceUseCase.addAssistant(
         requestUpdated.race,
         requestUpdated.user
@@ -94,6 +101,12 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
         date,
         description
       );
+
+      if ((quantity = assistants.length)) {
+        raceUseCase.update(requestUpdated.race, requestUpdated.user, {
+          isAvailable: false,
+        });
+      }
     }
     response.json({
       success: true,
