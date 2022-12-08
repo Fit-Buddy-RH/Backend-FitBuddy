@@ -1,6 +1,3 @@
-// using Twilio SendGrid's v3 Node.js Library
-// https://github.com/sendgrid/sendgrid-nodejs
-// const sgMail = require("@sendgrid/mail");
 import sgMail from "@sendgrid/mail";
 import * as dotenv from "dotenv";
 
@@ -39,7 +36,7 @@ function requestEmail(email, name, fullname, level, image, type, title, fullDate
     to: email,
     from: { name: "FitBuddy", email: "fitbuddy.kodemia@gmail.com" },
     subject: `¡Tienes una solicitud de carrera de ${name}!`,
-    templateId: "d-50f9a8a9b15a4cb5b67977a621e998cb",
+    templateId: process.env.SENDGRID_RACEREQNOT_TEMPLATE,
     dynamic_template_data: templateData,
   };
   sgMail
@@ -73,7 +70,7 @@ function acceptedEmail(runnerName, email, name, level, km, raceImage, type, titl
     to: email,
     from: { name: "FitBuddy", email: "fitbuddy.kodemia@gmail.com" },
     subject: `¡${runnerName} te ha aceptado para correr!`,
-    templateId: "d-8ca50ca9e18a4fe68e5ca139a408ba20",
+    templateId: process.env.SENDGRID_REQACCEPT_TEMPLATE,
     dynamic_template_data: templateData,
   };
   sgMail
