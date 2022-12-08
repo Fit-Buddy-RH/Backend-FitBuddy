@@ -1,5 +1,4 @@
 import jwt from "../libs/jwt.js";
-import * as userUseCase from "../useCase/user.use.js";
 
 function auth(request, response, next) {
   try {
