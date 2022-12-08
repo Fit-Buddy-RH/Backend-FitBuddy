@@ -41,8 +41,6 @@ const raceSchema = mongoose.Schema(
     },
     km: {
       type: Number,
-      enum: [5, 10, 15],
-      default: 5,
       required: true,
     },
     date: {
