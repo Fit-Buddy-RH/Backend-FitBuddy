@@ -27,8 +27,7 @@ const userSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      default:
-        "https://fibuddy-users-bucket.s3.us-east-2.amazonaws.com/profile+picture.png",
+      default: "https://fibuddy-users-bucket.s3.us-east-2.amazonaws.com/profile+picture.png",
     },
     imageKey: {
       type: String,

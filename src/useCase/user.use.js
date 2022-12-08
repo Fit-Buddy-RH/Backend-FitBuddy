@@ -11,21 +11,13 @@ export async function create(newUser) {
 }
 
 export async function getAll() {
-  const data = await User.find({})
-    .populate("friends")
-    .populate("friendsRequest")
-    .populate("racesCreated")
-    .populate("racesRequests");
+  const data = await User.find({}).populate("friends").populate("friendsRequest").populate("racesCreated").populate("racesRequests");
   if (!data) throw new StatusHttp("No hay usuarios creados", 404);
   return data;
 }
 
 export async function getById(id) {
-  const data = await User.findById(id)
-    .populate("friends")
-    .populate("friendsRequest")
-    .populate("racesCreated")
-    .populate("racesRequests");
+  const data = await User.findById(id).populate("friends").populate("friendsRequest").populate("racesCreated").populate("racesRequests");
   if (!data) throw new StatusHttp("Usuario no encontrado", 404);
   return data;
 }

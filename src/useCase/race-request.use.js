@@ -14,19 +14,20 @@ export async function getById(id) {
 }
 
 export async function getByRace(idRace) {
-  const data = await RaceRequest.find({ race: idRace })
-    .populate("user")
-    .populate("race");
+  const data = await RaceRequest.find({ race: idRace }).populate("user").populate("race");
   if (!data) throw new StatusHttp("Solicitud de Carrera no encontrada", 404);
   return data;
 }
 
 export async function getByUser(idUser) {
-  const data = await RaceRequest.find({ user: idUser })
-    .populate("user")
-    .populate("race");
+  const data = await RaceRequest.find({ user: idUser }).populate("user").populate("race");
   if (!data) throw new StatusHttp("Solicitud de Carrera no encontrada", 404);
   return data;
+}
+
+export async function searchRequest({ idUser, idRace }) {
+  const data = await RaceRequest.find({ user: idUser, race: idRace }).populate("user").populate("race");
+  if (data) throw new StatusHttp(`Ya existe una solicitud de este usuario a esta carrera`, 401);
 }
 
 export async function update(idRR, newStatus) {

@@ -13,9 +13,7 @@ router.get("/verify/:to", async (request, response, next) => {
       params: { to },
     } = request;
 
-    const verification = await twilioClient.verify
-      .services(TWILIO_SERVICE_ID)
-      .verifications.create({ to: to, channel: "sms" });
+    const verification = await twilioClient.verify.services(TWILIO_SERVICE_ID).verifications.create({ to: to, channel: "sms" });
     response.json({
       success: true,
       verification: verification,
@@ -30,9 +28,7 @@ router.get("/check/:to/:code", async (request, response, next) => {
     const {
       params: { to, code },
     } = request;
-    const verification = await twilioClient.verify
-      .services(TWILIO_SERVICE_ID)
-      .verificationChecks.create({ to: to, code: code });
+    const verification = await twilioClient.verify.services(TWILIO_SERVICE_ID).verificationChecks.create({ to: to, code: code });
     response.json({
       success: true,
       verification: verification,

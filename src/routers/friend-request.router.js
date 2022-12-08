@@ -9,6 +9,7 @@ router.post("/:idUser", auth, async (request, response, next) => {
   try {
     const { auth: idMe } = request;
     const { idUser } = request.params;
+    await friendRequestUseCase.searchRequest(idMe, idUser);
     const newRequest = await friendRequestUseCase.create(idMe, idUser);
     await userUseCase.addFriendRequest(idUser, newRequest.id);
     response.json({
