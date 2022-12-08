@@ -9,47 +9,17 @@ dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 function months(number) {
-  const monthsArray = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ];
+  const monthsArray = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
   return monthsArray[number - 1];
 }
 
 function weekdayName(day) {
-  const weekArray = [
-    "Domingo",
-    "Lunes",
-    "Martes",
-    "Miércoles",
-    "Jueves",
-    "Viernes",
-    "Sábado",
-  ];
+  const weekArray = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
   return weekArray[day];
 }
 
-function requestEmail(
-  email,
-  name,
-  fullname,
-  level,
-  image,
-  type,
-  title,
-  fullDate
-) {
+function requestEmail(email, name, fullname, level, image, type, title, fullDate) {
   const templateData = {
     email: email,
     name: name,
@@ -82,18 +52,7 @@ function requestEmail(
     });
 }
 
-function acceptedEmail(
-  runnerName,
-  email,
-  name,
-  level,
-  km,
-  raceImage,
-  type,
-  title,
-  fullDate,
-  desc
-) {
+function acceptedEmail(runnerName, email, name, level, km, raceImage, type, title, fullDate, desc) {
   const templateData = {
     runnerName: runnerName,
     email: email,

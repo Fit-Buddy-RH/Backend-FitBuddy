@@ -19,6 +19,13 @@ export async function getByUser(idUser) {
   return data;
 }
 
+export async function searchRequest(idMe, idUser) {
+  const foundRequestFst = await FriendRequest.find({ userRequester: idMe, userResponder: idUser });
+  const foundRequestSec = await FriendRequest.find({ userRequester: idUser, userResponder: idMe });
+
+  if (foundRequestFst || foundRequestSec) throw new StatusHttp("Ya existe una solicitud", 401);
+}
+
 export async function update(idFR, newStatus) {
   const data = await FriendRequest.findByIdAndUpdate(idFR, newStatus, {
     new: true,

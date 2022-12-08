@@ -69,27 +69,22 @@ router.get("/", auth, async (request, response, next) => {
   }
 });
 
-router.patch(
-  "/",
-  auth,
-  upload.single("image"),
-  async (request, response, next) => {
-    try {
-      const { auth: id } = request;
-      const { body: newDataUser, file } = request;
-      const updatedUser = await userUseCase.update(id, newDataUser, file);
-      response.json({
-        success: true,
-        message: "El Usuario fue editado con éxito",
-        data: {
-          user: updatedUser,
-        },
-      });
-    } catch (error) {
-      next(error);
-    }
+router.patch("/", auth, upload.single("image"), async (request, response, next) => {
+  try {
+    const { auth: id } = request;
+    const { body: newDataUser, file } = request;
+    const updatedUser = await userUseCase.update(id, newDataUser, file);
+    response.json({
+      success: true,
+      message: "El Usuario fue editado con éxito",
+      data: {
+        user: updatedUser,
+      },
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 router.delete("/", auth, async (request, response, next) => {
   try {

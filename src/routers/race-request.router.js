@@ -11,25 +11,11 @@ router.post("/:idRace", auth, async (request, response, next) => {
   try {
     const { auth: idMe } = request;
     const { idRace } = request.params;
+    await raceRequestUseCase.searchRequest({ idUser: idMe, idRace });
     const newRequest = await raceRequestUseCase.create(idMe, idRace);
     const raceInfo = await raceUseCase.getById(idRace);
-    const {
-      email: emailResponder,
-      name,
-      fullname,
-      level,
-      image,
-    } = await userUseCase.getById(raceInfo.user);
-    requestEmail(
-      emailResponder,
-      name,
-      fullname,
-      level,
-      image,
-      raceInfo.type,
-      raceInfo.title,
-      raceInfo.date
-    );
+    const { email: emailResponder, name, fullname, level, image } = await userUseCase.getById(raceInfo.user);
+    requestEmail(emailResponder, name, fullname, level, image, raceInfo.type, raceInfo.title, raceInfo.date);
     await userUseCase.addRaceRequest(raceInfo.user, newRequest.id);
     response.json({
       success: true,
@@ -83,24 +69,10 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
         type,
         quantity,
         assistants,
-      } = await raceUseCase.addAssistant(
-        requestUpdated.race,
-        requestUpdated.user
-      );
+      } = await raceUseCase.addAssistant(requestUpdated.race, requestUpdated.user);
       const { name: runnerName } = await userUseCase.getById(user);
 
-      acceptedEmail(
-        runnerName,
-        email,
-        name,
-        level,
-        km,
-        raceImage,
-        type,
-        title,
-        date,
-        description
-      );
+      acceptedEmail(runnerName, email, name, level, km, raceImage, type, title, date, description);
 
       if ((quantity = assistants.length)) {
         raceUseCase.update(requestUpdated.race, requestUpdated.user, {
