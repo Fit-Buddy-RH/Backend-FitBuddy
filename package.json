@@ -32,11 +32,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hector-bapz/Backend-FitBuddy.git"
+    "url": "git+https://github.com/Fit-Buddy-RH/Backend-FitBuddy.git"
   },
   "bugs": {
-    "url": "https://github.com/hector-bapz/Backend-FitBuddy/issues"
+    "url": "https://github.com/Fit-Buddy-RH/Backend-FitBuddy/issues"
   },
-  "homepage": "https://github.com/hector-bapz/Backend-FitBuddy#readme",
+  "homepage": "https://github.com/Fit-Buddy-RH/Backend-FitBuddy#readme",
   "description": ""
 }
