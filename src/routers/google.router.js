@@ -16,13 +16,7 @@ router.post(
     try {
       const {
         user: {
-          _json: {
-            email,
-            given_name: name,
-            family_name: lastname,
-            picture,
-            id,
-          },
+          _json: { email, given_name: name, family_name: lastname, id },
         },
       } = request;
       const emailFound = await User.findOne({ email: email });
@@ -35,7 +29,6 @@ router.post(
           name: name,
           lastname: lastname,
           fullname: `${name} ${lastname}`,
-          image: picture,
           email: email,
           idGoogle: id,
         };
