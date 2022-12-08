@@ -51,13 +51,18 @@ const raceSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Jogging", "Running", "Retrorunning"],
+      enum: ["Jogging", "Running", "Caminar"],
       default: "Jogging",
       required: true,
     },
     quantity: {
       type: Number,
       required: true,
+    },
+    isAvailable: {
+      type: Boolean,
+      required: true,
+      default: true,
     },
     image: {
       type: String,

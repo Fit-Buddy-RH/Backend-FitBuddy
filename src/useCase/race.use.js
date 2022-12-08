@@ -18,7 +18,7 @@ export async function create(newRace, user) {
 }
 
 export async function getAll() {
-  const data = await Race.find({ status: "Programada" })
+  const data = await Race.find({ status: "Programada", isAvailable: true })
     .populate("user")
     .populate("comment");
   if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
@@ -40,14 +40,14 @@ export async function getByUser(id) {
 }
 
 export async function getByAssistant(id) {
-  const data = await Race.find({ assistants: id })
+  const data = await Race.find({ assistants: id, status: "Terminada" })
     .populate("user")
     .populate("comment");
   if (!data) throw new StatusHttp("No hay carreras por mostrar", 404);
   return data;
 }
 
-export async function getNear(coordinates, m) {
+export async function getNear(coordinates) {
   const data = await Race.aggregate([
     {
       $geoNear: {
@@ -55,10 +55,10 @@ export async function getNear(coordinates, m) {
           type: "Point",
           coordinates: coordinates,
         },
-        maxDistance: m * 1000,
+        maxDistance: 25000,
         spherical: true,
         distanceField: "distance",
-        query: { status: "Programada" },
+        query: { status: "Programada", isAvailable: true },
       },
     },
   ]);

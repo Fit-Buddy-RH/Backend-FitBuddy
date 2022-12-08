@@ -30,7 +30,7 @@ router.post("/", auth, async (request, response, next) => {
 router.get("/", auth, async (request, response, next) => {
   try {
     let {
-      query: { km = 2, long, lat, user, race, me },
+      query: { long, lat, user, race, me },
       auth: idme,
     } = request;
     let races = "";
@@ -59,9 +59,8 @@ router.get("/", auth, async (request, response, next) => {
     } else if (race) {
       races = await raceUseCase.getById(race);
     } else if (long != undefined && lat != undefined) {
-      if (km < 1) km = 1;
       const coordinates = [parseFloat(long), parseFloat(lat)];
-      races = await raceUseCase.getNear(coordinates, km);
+      races = await raceUseCase.getNear(coordinates);
     } else {
       races = await raceUseCase.getAll();
     }
