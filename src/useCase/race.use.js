@@ -8,7 +8,6 @@ export async function create(newRace, user) {
   const data = await Race.create({
     ...newRace,
     user: user,
-    rating: null,
     image: imageUrl,
   });
   if (!data) throw new StatusHttp("Ocurrió un error", 400);
@@ -22,7 +21,7 @@ export async function getAll() {
 }
 
 export async function getById(id) {
-  const data = await Race.findById(id).populate("user").populate("comment");
+  const data = await Race.findById(id).populate({ path: "comment", populate: { path: "user" }, path: "user" });
   if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }

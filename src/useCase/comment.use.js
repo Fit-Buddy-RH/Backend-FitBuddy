@@ -4,22 +4,24 @@ import { StatusHttp } from "../libs/customError.js";
 export async function create(idUser, idRace, comment, file) {
   let data = "";
   if (!file) {
-    const { text, rate } = comment;
+    const { text, rate, title } = comment;
     const rateNumber = parseInt(rate);
     data = await Comment.create({
       race: idRace,
       user: idUser,
       text: text,
       rate: rateNumber,
+      title: title,
     });
   } else {
     const { location, key } = file;
-    const { text, rate } = comment;
+    const { text, rate, title } = comment;
     const rateNumber = parseInt(rate);
     data = await Comment.create({
       race: idRace,
       user: idUser,
       text: text,
+      title: title,
       rate: rateNumber,
       image: location,
       imageKey: key,

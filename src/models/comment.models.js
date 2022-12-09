@@ -12,6 +12,11 @@ const commentSchema = mongoose.Schema(
       ref: "user",
       required: true,
     },
+    title: {
+      type: String,
+      maxLenght: 100,
+      trim: true,
+    },
     text: {
       type: String,
       maxLenght: 1000,
