@@ -21,7 +21,7 @@ export async function getAll() {
 }
 
 export async function getById(id) {
-  const data = await Race.findById(id).populate({ path: "comment", populate: { path: "user" }, path: "user" });
+  const data = await Race.findById(id).populate("user").populate("comment");
   if (!data) throw new StatusHttp("Carrera no encontrada", 404);
   return data;
 }

@@ -72,7 +72,7 @@ const raceSchema = mongoose.Schema(
       required: true,
     },
     rating: {
-      type: Decimal128,
+      type: mongoose.Decimal128,
       default: 0,
     },
     comment: [
