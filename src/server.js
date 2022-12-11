@@ -16,7 +16,7 @@ const server = express();
 //middlewares
 server.use(cors());
 
-var whitelist = ['*']; //white list consumers
+var whitelist = ['https://www.fitbuddy.site']; //white list consumers
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
