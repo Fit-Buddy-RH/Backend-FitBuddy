@@ -14,7 +14,6 @@ import twilioRouter from "./routers/twilio.router.js";
 const server = express();
 
 //middlewares
-server.use(cors());
 
 var whitelist = ['https://www.fitbuddy.site']; //white list consumers
 var corsOptions = {
