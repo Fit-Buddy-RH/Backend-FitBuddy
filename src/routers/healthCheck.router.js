@@ -6,3 +6,5 @@ router.get("/", (request, response, next) => {
   response.status(200);
   next();
 });
+
+export default router;
