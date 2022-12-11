@@ -8,6 +8,7 @@ import raceRouter from "./routers/race.router.js";
 import commentRouter from "./routers/comment.router.js";
 import raceRequestRouter from "./routers/race-request.router.js";
 import friendRequestRouter from "./routers/friend-request.router.js";
+import healthCheckRouter from "./routers/healthCheck.router.js";
 import googleRouter from "./routers/google.router.js";
 import twilioRouter from "./routers/twilio.router.js";
 
@@ -19,6 +20,7 @@ server.use(express.json());
 server.use(passport.initialize());
 
 //Routers
+server.use("/", healthCheckRouter);
 server.use("/user", userRouter);
 server.use("/race", raceRouter);
 server.use("/comment", commentRouter);
