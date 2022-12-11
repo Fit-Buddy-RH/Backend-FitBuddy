@@ -33,7 +33,7 @@ export async function create(idUser, idRace, comment, file) {
 
 export async function getByRace(idRace) {
   const data = await Comment.find({ race: idRace }).populate("user");
-  if (!data) throw new StatusHttp("Comentarios no encontrados", 404);
+  if (!data) throw new StatusHttp("No hay comentarios para mostrar", 404);
   return data;
 }
 

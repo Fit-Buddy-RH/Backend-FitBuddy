@@ -14,8 +14,8 @@ import twilioRouter from "./routers/twilio.router.js";
 const server = express();
 
 //middlewares
-server.use(express.json());
 server.use(cors());
+server.use(express.json());
 server.use(passport.initialize());
 
 //Routers
