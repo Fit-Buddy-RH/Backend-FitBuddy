@@ -13,14 +13,8 @@ import twilioRouter from "./routers/twilio.router.js";
 
 const server = express();
 
-const corsOptions = {
-  origin: "*",
-  optionsSuccessStatus: 200,
-};
-
 //middlewares
-server.use(cors(corsOptions));
-
+server.use(cors());
 server.use(express.json());
 server.use(passport.initialize());
 

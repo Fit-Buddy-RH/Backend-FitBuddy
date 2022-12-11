@@ -1,5 +1,6 @@
 import { Comment } from "../models/comment.models.js";
 import { StatusHttp } from "../libs/customError.js";
+import { s3 } from "../libs/s3/index.js";
 
 export async function create(idUser, idRace, comment, file) {
   let data = "";

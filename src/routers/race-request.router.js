@@ -74,7 +74,7 @@ router.patch("/:idRequest", auth, async (request, response, next) => {
 
       acceptedEmail(runnerName, email, name, level, km, raceImage, type, title, date, description);
 
-      if ((quantity = assistants.length)) {
+      if (quantity == assistants.length) {
         raceUseCase.update(requestUpdated.race, requestUpdated.user, {
           isAvailable: false,
         });
