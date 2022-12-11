@@ -20,7 +20,7 @@ server.use(express.json());
 server.use(passport.initialize());
 
 //Routers
-server.use("/", healthCheckRouter);
+server.use("/healthCheck", healthCheckRouter);
 server.use("/user", userRouter);
 server.use("/race", raceRouter);
 server.use("/comment", commentRouter);
