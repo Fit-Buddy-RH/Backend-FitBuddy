@@ -27,7 +27,7 @@ export async function getByUser(idUser) {
 
 export async function searchRequest({ idUser, idRace }) {
   const data = await RaceRequest.find({ user: idUser, race: idRace }).populate("user").populate("race");
-  if (data) throw new StatusHttp(`Ya existe una solicitud de este usuario a esta carrera`, 401);
+  if (data.length) throw new StatusHttp(`Ya existe una solicitud de este usuario a esta carrera`, 401);
 }
 
 export async function update(idRR, newStatus) {

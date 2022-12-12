@@ -23,7 +23,7 @@ export async function searchRequest(idMe, idUser) {
   const foundRequestFst = await FriendRequest.find({ userRequester: idMe, userResponder: idUser });
   const foundRequestSec = await FriendRequest.find({ userRequester: idUser, userResponder: idMe });
 
-  if (foundRequestFst || foundRequestSec) throw new StatusHttp("Ya existe una solicitud", 401);
+  if (foundRequestFst.length || foundRequestSec.length) throw new StatusHttp("Ya existe una solicitud", 401);
 }
 
 export async function update(idFR, newStatus) {
