@@ -36,7 +36,7 @@ router.get("/", async (request, response, next) => {
     if (idRace) {
       allRequests = await raceRequestUseCase.getByRace(idRace);
     } else if (idUser) {
-      allRequests = await raceRequestUseCase.getByUser(idRace);
+      allRequests = await raceRequestUseCase.getByUser(idUser);
     }
     response.json({
       success: true,
