@@ -26,9 +26,8 @@ export async function logIn({ email, password, name, lastname, id, type }) {
     }
   } else {
     if (!userFound) throw new Error("Credenciales Inválidas");
-
+    if (!userFound.password) throw new Error("Credenciales inválidas");
     const isValidPassword = bcrypt.compare(password, userFound.password);
-
     if (!isValidPassword) throw new Error("Credenciales inválidas");
     userData = userFound;
     message = "Usuario loggeado con éxito";

@@ -3,14 +3,17 @@ import { StatusHttp } from "../libs/customError.js";
 import { s3 } from "../libs/s3/index.js";
 import * as dotenv from "dotenv";
 import jwt from "../libs/jwt.js";
+import bcrypt from "../libs/bcrypt.js";
 
 dotenv.config();
 
 export async function create(newUser) {
-  const { email, name, lastname } = newUser;
+  const { email, name, lastname, password } = newUser;
   const userFound = await User.findOne({ email: email });
   if (userFound) throw new StatusHttp("Correo ya existe", 401);
-  const data = await User.create({ ...newUser, fullname: `${name} ${lastname}` });
+  if (!password) throw new StatusHttp("Se requiere contraseña", 401);
+  const encriptedPwd = await bcrypt.hash(password);
+  const data = await User.create({ email: email, name: name, lastname: lastname, password: encriptedPwd, fullname: `${name} ${lastname}` });
   if (!data) throw new StatusHttp("Ha ocurrido un error", 400);
   const token = jwt.sign({ id: data.id });
   return { data, token };
