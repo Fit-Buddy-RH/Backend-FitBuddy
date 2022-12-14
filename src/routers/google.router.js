@@ -1,8 +1,8 @@
 import express from "express";
 import passport from "passport";
 import googleStrategy from "../middlewares/passportAuth.js";
-import * as Auth from "../useCase/auth.use.js";
-import { User } from "../models/user.models.js";
+import * as authUseCases from "../useCase/auth.use.js";
+import { welcomeEmail } from "../libs/sendgrid.js";
 
 const router = express.Router();
 googleStrategy();
@@ -19,28 +19,8 @@ router.post(
           _json: { email, given_name: name, family_name: lastname, id },
         },
       } = request;
-      const emailFound = await User.findOne({ email: email });
-      let userObject = "";
-      let userData = "";
-      let message = "";
-      let token = "";
-      if (!emailFound) {
-        userObject = {
-          name: name,
-          lastname: lastname,
-          fullname: `${name} ${lastname}`,
-          email: email,
-          idGoogle: id,
-        };
-        userData = await User.create(userObject);
-        message = "Usuario creado con éxito";
-        token = await Auth.logIn(userData.id);
-      } else {
-        userData = emailFound;
-        message = "Usuario loggeado con éxito";
-        token = await Auth.logIn(emailFound.id);
-      }
-
+      const { userData, message, token } = await authUseCases.logIn({ email: email, name: name, lastname: lastname, id: id, type: "google" });
+      welcomeEmail(email);
       response.json({
         message: message,
         token: token,

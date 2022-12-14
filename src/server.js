@@ -10,6 +10,7 @@ import raceRequestRouter from "./routers/race-request.router.js";
 import friendRequestRouter from "./routers/friend-request.router.js";
 import healthCheckRouter from "./routers/healthCheck.router.js";
 import googleRouter from "./routers/google.router.js";
+import loginRouter from "./routers/login.router.js";
 import twilioRouter from "./routers/twilio.router.js";
 
 const server = express();
@@ -27,6 +28,7 @@ server.use("/comment", commentRouter);
 server.use("/raceRequest", raceRequestRouter);
 server.use("/friendRequest", friendRequestRouter);
 server.use("/google", googleRouter);
+server.use("/login", loginRouter);
 server.use("/twilio", twilioRouter);
 
 //middleware - HandleErrors

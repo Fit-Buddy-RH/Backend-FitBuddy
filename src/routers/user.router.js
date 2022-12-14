@@ -6,9 +6,25 @@ import * as raceRequestUseCase from "../useCase/race-request.use.js";
 import * as friendRequestUseCase from "../useCase/friend-request.use.js";
 import { upload } from "../middlewares/multer.js";
 import { auth } from "../middlewares/auth.js";
+import { welcomeEmail } from "../libs/sendgrid.js";
 
 const router = express.Router();
 router.use(express.json());
+
+router.post("/", async (request, response, next) => {
+  try {
+    const { body: newUser } = request;
+    const { data, token } = await userUseCase.create(newUser);
+    welcomeEmail(data.email);
+    response.json({
+      message: "Usuario creado con éxito",
+      token: token,
+      data: data,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get("/", auth, async (request, response, next) => {
   try {

@@ -83,4 +83,21 @@ function acceptedEmail(runnerName, email, name, level, km, raceImage, type, titl
     });
 }
 
-export { requestEmail, acceptedEmail };
+function welcomeEmail(email) {
+  const msg = {
+    to: email,
+    from: { name: "FitBuddy", email: "fitbuddy.kodemia@gmail.com" },
+    subject: `¡Bienvenido a Fit Buddy!`,
+    templateId: process.env.SENDGRID_WELCOME_TEMPLATE,
+  };
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log("Email Enviado!");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+export { requestEmail, acceptedEmail, welcomeEmail };
