@@ -1,6 +1,7 @@
 import jwt from "../libs/jwt.js";
 import { User } from "../models/user.models.js";
 import bcrypt from "../libs/bcrypt.js";
+import { StatusHttp } from "../libs/customError.js";
 
 export async function logIn({ email, password, name, lastname, id, type }) {
   const userFound = await User.findOne({ email: email });
@@ -25,10 +26,10 @@ export async function logIn({ email, password, name, lastname, id, type }) {
       token = jwt.sign({ id: userFound.id });
     }
   } else {
-    if (!userFound) throw new Error("Credenciales Inválidas");
-    if (!userFound.password) throw new Error("Credenciales inválidas");
+    if (!userFound) throw new StatusHttp("Credenciales Inválidas", 401);
+    if (!userFound.password) throw new StatusHttp("Credenciales inválidas", 401);
     const isValidPassword = bcrypt.compare(password, userFound.password);
-    if (!isValidPassword) throw new Error("Credenciales inválidas");
+    if (!isValidPassword) throw new StatusHttp("Credenciales inválidas", 401);
     userData = userFound;
     message = "Usuario loggeado con éxito";
     token = jwt.sign({ id: userFound.id });
