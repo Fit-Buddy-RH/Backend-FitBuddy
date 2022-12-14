@@ -28,7 +28,7 @@ export async function logIn({ email, password, name, lastname, id, type }) {
   } else {
     if (!userFound) throw new StatusHttp("Credenciales Inválidas", 401);
     if (!userFound.password) throw new StatusHttp("Credenciales inválidas", 401);
-    const isValidPassword = bcrypt.compare(password, userFound.password);
+    const isValidPassword = await bcrypt.compare(password, userFound.password);
     if (!isValidPassword) throw new StatusHttp("Credenciales inválidas", 401);
     userData = userFound;
     message = "Usuario loggeado con éxito";
