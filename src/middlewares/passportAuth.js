@@ -15,11 +15,6 @@ const authGoogle = () => {
       },
       async (req, accessToken, refreshToken, profile, done) => {
         try {
-          // if (emailFound) {
-          //   req.user = { data: emailFound, action: "create" };
-          // } else {
-          //   req.user = { ...profile, action: create };
-          // }
           req.user = profile;
           done(null, profile);
         } catch {

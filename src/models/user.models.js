@@ -20,11 +20,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    birthdate: {
-      type: Date,
-      required: true,
-      default: "1999-01-01T00:00:00.000Z",
-    },
     image: {
       type: String,
       default: "https://fibuddy-users-bucket.s3.us-east-2.amazonaws.com/profile+picture.png",
@@ -45,9 +40,13 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: /.*@.*\..*/,
     },
+    password: {
+      type: String,
+      default: null,
+    },
     idGoogle: {
       type: String,
-      required: true,
+      default: null,
     },
     isVerified: {
       type: Boolean,
